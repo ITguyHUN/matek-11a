@@ -1,0 +1,1131 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Hatvány, gyök, logaritmus</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: négyzetrácsos füzetlap – bal oldalt fejezetjegyzék, jobbra a füzetlap piros margóvonallal; kék toll = kiemelés, piros toll = javítás */
+:root{
+  --paper:#f4f7fb; --card:#ffffff; --gridline:#e2e9f4; --line:#d3dcea;
+  --ink:#16203a; --muted:#56627d; --pen:#2148c9; --pen-soft:#e7edfc;
+  --red:#c2332b; --red-soft:#fcebe9; --green:#1b7a45; --green-soft:#e3f3e9; --margin:#eeb4b0;
+  --f-display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --f-body:"Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0e1422; --card:#151d2e; --gridline:#1a2338; --line:#28334c;
+  --ink:#e5eaf5; --muted:#9ba7c1; --pen:#86a6ff; --pen-soft:#1d2a4b;
+  --red:#ff8076; --red-soft:#3a1d1c; --green:#62d597; --green-soft:#12301f; --margin:#5d2f33; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0e1422; --card:#151d2e; --gridline:#1a2338; --line:#28334c;
+  --ink:#e5eaf5; --muted:#9ba7c1; --pen:#86a6ff; --pen-soft:#1d2a4b;
+  --red:#ff8076; --red-soft:#3a1d1c; --green:#62d597; --green-soft:#12301f; --margin:#5d2f33; color-scheme:dark}
+
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;
+  background-image:linear-gradient(var(--gridline) 1px,transparent 1px),linear-gradient(90deg,var(--gridline) 1px,transparent 1px);
+  background-size:24px 24px}
+*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+header.top{padding-block:28px 22px;display:flex;flex-wrap:wrap;gap:12px 28px;align-items:end;justify-content:space-between}
+.brand h1{font-family:var(--f-display);font-weight:800;font-size:clamp(2rem,5vw,3.2rem);line-height:1;margin:0;letter-spacing:-.02em;text-wrap:balance}
+.brand h1 .dot{color:var(--pen)}
+.brand p{margin:.5rem 0 0;color:var(--muted);font-size:.95rem}
+.strip{font-family:var(--f-mono);font-size:.85rem;color:var(--pen);letter-spacing:.02em}
+.overall{display:flex;flex-direction:column;gap:6px;min-width:220px}
+.overall .lbl{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.bar{height:8px;background:var(--pen-soft);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--pen);width:0;transition:width .4s}
+.layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:28px;align-items:start}
+nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);display:flex;flex-direction:column;gap:2px}
+nav.toc a{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;padding:7px 10px;border-radius:6px;color:var(--ink);text-decoration:none;font-size:.93rem}
+nav.toc a .n{font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+nav.toc a .p{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
+nav.toc a .p.done{color:var(--green)}
+nav.toc a:hover{background:var(--pen-soft)}
+nav.toc a[aria-current="page"]{background:var(--card);box-shadow:inset 0 0 0 1px var(--line);font-weight:600}
+nav.toc a[aria-current="page"] .n{color:var(--pen)}
+nav.toc .sep{height:1px;background:var(--line);margin:8px 10px}
+@media (max-width:880px){
+  .layout{grid-template-columns:minmax(0,1fr);gap:14px}
+  nav.toc{flex-direction:row;overflow-x:auto;gap:6px;padding:6px 0 10px;scrollbar-width:thin;top:env(safe-area-inset-top,0px);background:var(--paper);z-index:5}
+  nav.toc a{grid-template-columns:auto auto;white-space:nowrap;padding:6px 10px;border:1px solid var(--line);background:var(--card)}
+  nav.toc a .p{display:none}
+  nav.toc .sep{display:none}
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+}
+.sheet{background:var(--card);border:1px solid var(--line);border-radius:4px;position:relative;padding:30px 32px 36px 60px;min-width:0}
+.sheet::before{content:"";position:absolute;top:0;bottom:0;left:40px;width:2px;background:var(--margin)}
+@media (max-width:600px){.sheet{padding:22px 16px 28px 30px}.sheet::before{left:16px}}
+.eyebrow{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--pen)}
+h2.ch{font-family:var(--f-display);font-weight:800;font-size:clamp(1.7rem,3.6vw,2.4rem);line-height:1.08;margin:.2rem 0 .6rem;text-wrap:balance}
+.lead{font-size:1.06rem;color:var(--ink);max-width:65ch;margin:0}
+section.blk{margin-top:34px;display:flex;flex-direction:column;gap:12px}
+h3{font-family:var(--f-display);font-weight:600;font-size:1.3rem;margin:0;display:flex;align-items:baseline;gap:10px}
+h3 .tag{font-family:var(--f-mono);font-size:.72rem;font-weight:400;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.prose{max-width:68ch}
+.prose p{margin:.3rem 0}
+.prose ul{margin:.3rem 0;padding-left:1.2rem;display:flex;flex-direction:column;gap:4px}
+.mathbox{overflow-x:auto;overflow-y:hidden;padding:6px 0;max-width:100%}
+.mathbox mjx-container[display="true"]{margin:.5em 0 !important}
+.tbl{overflow-x:auto;max-width:100%}
+table{border-collapse:collapse;font-size:.92rem;min-width:460px}
+th,td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+/* igaz-hamis */
+.tf{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.tfc{border:1px solid var(--line);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:10px;background:var(--card);min-width:0}
+.tfc .st{min-height:2.2em;overflow-x:auto}
+.tfc .btns{display:flex;gap:8px}
+.tfc.ok{border-color:var(--green);background:var(--green-soft)}
+.tfc.no{border-color:var(--red);background:var(--red-soft)}
+.tfc .why{font-size:.9rem}
+.tfc .why b{display:block}
+/* gombok */
+button{font:inherit;cursor:pointer}
+.btn{font-family:var(--f-body);font-weight:600;font-size:.92rem;border-radius:6px;padding:8px 14px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.btn:hover{border-color:var(--pen)}
+.btn.primary{background:var(--pen);border-color:var(--pen);color:var(--card)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn.sm{padding:5px 11px;font-size:.85rem}
+.btn:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:2px solid var(--pen);outline-offset:2px}
+/* mintapélda */
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;counter-reset:st}
+.steps li{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;align-items:start;counter-increment:st}
+.steps li::before{content:counter(st)".";font-family:var(--f-mono);color:var(--pen);font-size:.9rem;padding-top:3px}
+.steps li > div{overflow-x:auto;min-width:0}
+.task{font-weight:600}
+/* gyakorlás */
+.practice{border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:14px;background:var(--card)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:.85rem;padding:5px 11px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.prob{min-height:90px;overflow-x:auto}
+.prob p{margin:.2rem 0}
+.ansrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ansrow input{font-family:var(--f-mono);font-size:1.05rem;padding:9px 12px;border:1.5px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);width:min(240px,100%)}
+.ansrow input:focus{border-color:var(--pen);outline:none}
+.fmt{font-size:.8rem;color:var(--muted)}
+.fmt code{font-family:var(--f-mono);background:var(--pen-soft);padding:1px 5px;border-radius:4px;color:var(--ink)}
+.fb{border-radius:6px;padding:10px 14px;font-size:.95rem}
+.fb.ok{background:var(--green-soft);color:var(--green)}
+.fb.no{background:var(--red-soft);color:var(--red)}
+.fb.info{background:var(--pen-soft);color:var(--ink)}
+.solbox{border-top:1px dashed var(--line);padding-top:10px;overflow-x:auto}
+.solbox p{margin:.25rem 0}
+.score{font-family:var(--f-mono);font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.choices{display:flex;gap:8px;flex-wrap:wrap}
+.choices .btn{font-family:var(--f-mono);font-size:1.15rem;min-width:56px}
+/* grafikon */
+.plot{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start}
+@media (max-width:760px){.plot{grid-template-columns:minmax(0,1fr)}}
+.canvasbox{width:100%;max-width:520px;aspect-ratio:1;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--card)}
+.canvasbox canvas{display:block;width:100%;height:100%}
+.ctrl{display:flex;flex-direction:column;gap:12px;font-size:.92rem}
+.ctrl label{display:flex;flex-direction:column;gap:4px}
+.ctrl .row{display:flex;gap:6px;flex-wrap:wrap}
+.ctrl input[type=range]{width:100%;accent-color:var(--pen)}
+.ftex{font-family:var(--f-mono);font-size:1.05rem;padding:8px 10px;background:var(--pen-soft);border-radius:6px}
+.props{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:.88rem}
+.props dt{color:var(--muted)}
+.props dd{margin:0;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.chk{flex-direction:row !important;align-items:center;gap:8px !important}
+/* kezdőlap */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.ccard{display:flex;flex-direction:column;gap:6px;padding:14px 16px;border:1px solid var(--line);border-radius:6px;text-decoration:none;color:var(--ink);background:var(--card)}
+.ccard:hover{border-color:var(--pen)}
+.ccard .n{font-family:var(--f-mono);font-size:.78rem;color:var(--pen)}
+.ccard strong{font-family:var(--f-display);font-size:1.12rem;font-weight:600}
+.ccard span.d{font-size:.88rem;color:var(--muted)}
+.ccard.test{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.ccard.test .n,.ccard.test span.d{color:var(--card);opacity:.8}
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.how div{display:flex;flex-direction:column;gap:4px}
+.how b{font-family:var(--f-display);font-size:1.05rem}
+.how span{font-size:.92rem;color:var(--muted)}
+/* próba */
+.titem{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;padding:14px 0;border-bottom:1px solid var(--line)}
+.titem .num{font-family:var(--f-mono);color:var(--pen);padding-top:4px}
+.titem .body{display:flex;flex-direction:column;gap:8px;min-width:0}
+.titem.ok .num{color:var(--green)} .titem.no .num{color:var(--red)}
+.result{display:flex;flex-wrap:wrap;gap:24px;align-items:center;padding:16px;border-radius:8px;background:var(--pen-soft)}
+.result .big{font-family:var(--f-display);font-size:2.6rem;font-weight:800;line-height:1}
+.foot{margin-top:18px;font-size:.82rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.confirm{display:inline-flex;gap:8px;align-items:center}
+@media (prefers-reduced-motion:reduce){*{transition:none !important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="strip">aⁿ · ⁿ√a · a^(m/n) · logₐ b</div>
+      <h1>Hatvány<span class="dot"> · </span>Gyök<span class="dot"> · </span>Logaritmus</h1>
+      <p>Interaktív ismétlő tananyag · 11. évfolyam · középszintű érettségi</p>
+    </div>
+    <div class="overall">
+      <span class="lbl" id="ovl">Haladás: 0 / 100 helyes megoldás</span>
+      <div class="bar"><i id="ovb"></i></div>
+    </div>
+  </header>
+  <div class="layout">
+    <nav class="toc" id="toc" aria-label="Fejezetek"></nav>
+    <main class="sheet" id="main" tabindex="-1"></main>
+  </div>
+</div>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+  svg: { fontCache: 'global' },
+  options: { enableMenu: false }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js"></script>
+
+<script id="gen">
+/* ===== GENERÁTOROK (tiszta függvények) ===== */
+const T = String.raw;
+const R = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const P = arr => arr[Math.floor(Math.random() * arr.length)];
+const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) { const t = b; b = a % b; a = t; } return a || 1; };
+function F(n, d = 1) { if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; }
+const fv = f => f.n / f.d;
+const fadd = (a, b) => F(a.n * b.d + b.n * a.d, a.d * b.d);
+function fpow(f, e) { return e >= 0 ? F(f.n ** e, f.d ** e) : F(f.d ** (-e), f.n ** (-e)); }
+function ft(f) { if (f.d === 1) return String(f.n); return (f.n < 0 ? '-' : '') + T`\frac{${Math.abs(f.n)}}{${f.d}}`; }
+function nt(x) { return String(+(+x).toFixed(10)).replace('.', '{,}'); }
+function hu(x, dec) { const s = dec == null ? String(+(+x).toFixed(10)) : (+x).toFixed(dec); return s.replace('-', '−').replace('.', ','); }
+function big(x) { return String(Math.round(x)).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+function bigT(x) { return String(Math.round(x)).replace(/\B(?=(\d{3})+(?!\d))/g, '\\,'); }
+const xs = (s, v = 'x') => s === 0 ? v : (s > 0 ? `${v}+${s}` : `${v}-${-s}`);
+const pt = v => v === 0 ? '' : (v > 0 ? `+${v}` : `-${-v}`);
+const mulX = (i, e) => i === 1 ? (e === 'x' ? 'x' : e) : (e === 'x' ? `${i}x` : `${i}(${e})`);
+const lin = (p, q) => (p === 1 ? 'x' : `${p}x`) + (q === 0 ? '' : q > 0 ? `+${q}` : `-${-q}`);
+const yk = i => i === 1 ? 'y' : i === -1 ? '-y' : `${i}y`;
+function lgOf(b) { return b === 10 ? T`\lg` : T`\log_{${b}}`; }
+function linCoef(B, term) { /* -B·term */ if (B === 0) return ''; if (B > 0) return B === 1 ? `-${term}` : `-${B}${term}`; return B === -1 ? `+${term}` : `+${-B}${term}`; }
+const cst = C => C === 0 ? '' : (C > 0 ? `+${C}` : `-${-C}`);
+const FMT = { frac: 'egész vagy tört', dec: 'tizedes tört', set: 'egy vagy több szám' };
+
+const G = {};
+
+/* --- 1. Hatványozás --- */
+G.negkitevo = { ch: 'hatvany', name: 'Negatív kitevő', make() {
+  const t = R(0, 3); let tex, val, sol;
+  if (t === 0) { const a = P([2, 3, 4, 5, 10]); const n = a === 10 ? R(1, 4) : R(1, 3);
+    tex = T`${a}^{-${n}}`; val = F(1, a ** n); sol = [T`\[${a}^{-${n}}=\frac{1}{${a}^{${n}}}=${ft(val)}\]`]; }
+  else if (t === 1) { const [p, q] = P([[2, 3], [1, 2], [3, 4], [2, 5], [3, 5], [1, 3], [4, 3], [5, 2]]); const n = R(1, 3);
+    tex = T`\left(\frac{${p}}{${q}}\right)^{-${n}}`; val = F(q ** n, p ** n);
+    sol = [T`\[\left(\frac{${p}}{${q}}\right)^{-${n}}=\left(\frac{${q}}{${p}}\right)^{${n}}=${ft(val)}\]`, 'Negatív kitevőnél a tört megfordul (reciprok), a kitevő pozitív lesz.']; }
+  else if (t === 2) { const a = P([2, 3, 5]); const n = R(1, 3); tex = T`(-${a})^{-${n}}`; val = F((-1) ** n, a ** n);
+    sol = [T`\[(-${a})^{-${n}}=\frac{1}{(-${a})^{${n}}}=\frac{1}{${(-a) ** n}}=${ft(val)}\]`, n % 2 ? 'Páratlan kitevő esetén a negatív alap hatványa negatív.' : 'Páros kitevő esetén a negatív alap hatványa pozitív.']; }
+  else { const a = R(2, 6); let b = R(2, 6); while (b === a) b = R(2, 6); tex = T`${a}^{-1}+${b}^{-1}`; val = F(a + b, a * b);
+    sol = [T`\[${a}^{-1}+${b}^{-1}=\frac{1}{${a}}+\frac{1}{${b}}=\frac{${b}}{${a * b}}+\frac{${a}}{${a * b}}=${ft(val)}\]`]; }
+  return { q: T`<p>Számítsd ki!</p>\[${tex}\]`, ans: { vals: [fv(val)] }, fmt: FMT.frac,
+    hint: T`A negatív kitevő reciprokot jelent: \(a^{-n}=\dfrac{1}{a^n}\). Ettől a szám nem lesz negatív!`, sol };
+} };
+
+G.egyhatvany = { ch: 'hatvany', name: 'Közös alapra hozás', make() {
+  const p = P([2, 3]); const B = p === 2 ? [[2, 1], [4, 2], [8, 3], [16, 4]] : [[3, 1], [9, 2], [27, 3]];
+  const nz = (a, b) => { let e = 0; while (e === 0) e = R(a, b); return e; };
+  const b1 = P(B), b2 = P(B), b3 = P(B); const e1 = nz(-2, 3), e2 = nz(-2, 3), e3 = nz(-2, 3);
+  const k1 = b1[1] * e1, k2 = b2[1] * e2, k3 = b3[1] * e3, k = k1 + k2 - k3;
+  return { q: T`<p>Melyik szám kerül a négyzet helyére?</p>\[\frac{${b1[0]}^{${e1}}\cdot ${b2[0]}^{${e2}}}{${b3[0]}^{${e3}}}=${p}^{\,\square}\]`,
+    ans: { vals: [k] }, fmt: 'egész szám',
+    hint: T`Írd fel mindegyik alapot \(${p}\) hatványaként (pl. \(${B[2][0]}=${p}^{${B[2][1]}}\)). Szorzásnál a kitevők összeadódnak, osztásnál kivonódnak.`,
+    sol: [T`\[\frac{${p}^{${k1}}\cdot ${p}^{${k2}}}{${p}^{${k3}}}=${p}^{${k1}+(${k2})-(${k3})}=${p}^{${k}}\]`, T`A keresett kitevő: \(${k}\).`] };
+} };
+
+G.kiemeles = { ch: 'hatvany', name: 'Kiemelés', make() {
+  const p = P([2, 3, 5]); const a = R(1, p === 5 ? 2 : 3); const b = R(0, a - 1); const plus = R(0, 1) === 1;
+  const s = plus ? '+' : '-'; const val = plus ? p ** a + p ** b : p ** a - p ** b;
+  const ex = b === 0 ? 'n' : `n+${b}`;
+  return { q: T`<p>Egyszerűsíts, és számítsd ki! (\(n\) tetszőleges egész szám)</p>\[\frac{${p}^{n+${a}}${s}${p}^{${ex}}}{${p}^{n}}\]`,
+    ans: { vals: [val] }, fmt: 'egész szám',
+    hint: T`Összeget nem lehet „összevonni”, de ki lehet emelni: emeld ki a számlálóból \(${p}^{n}\)-t, utána egyszerűsíts.`,
+    sol: [T`\[\frac{${p}^{n}\left(${p}^{${a}}${s}${p}^{${b}}\right)}{${p}^{n}}=${p ** a}${s}${p ** b}=${val}\]`] };
+} };
+
+/* --- 2. Gyök --- */
+G.gyokertek = { ch: 'gyok', name: 'Gyökvonás', make() {
+  const k = R(0, 2); let n = P([2, 3, 4, 5]); if (k === 2) n = P([2, 3]);
+  const rt = x => n === 2 ? T`\sqrt{${x}}` : T`\sqrt[${n}]{${x}}`;
+  let rad, ans, sol;
+  if (k === 0) { const b = R(1, n === 2 ? 12 : n === 3 ? 5 : 3); const neg = R(0, 2) === 0; const r = (neg ? -1 : 1) * b ** n; rad = String(r);
+    if (neg && n % 2 === 0) { ans = { none: true }; sol = [T`Páros gyökkitevő (\(n=${n}\)) mellett negatív számnak nincs gyöke, mert páros kitevőjű hatvány sosem negatív. A kifejezés <b>nincs értelmezve</b>.`]; }
+    else { const v = neg ? -b : b; ans = { vals: [v] }; sol = [T`\[${rt(rad)}=${v},\quad\text{mert}\quad ${v < 0 ? '(' + v + ')' : v}^{${n}}=${r}\]`]; } }
+  else if (k === 1) { const b = R(2, n === 2 ? 9 : 3); rad = T`\frac{1}{${b ** n}}`; ans = { vals: [1 / b] };
+    sol = [T`\[${rt(rad)}=\frac{1}{${b}},\quad\text{mert}\quad ${b}^{${n}}=${b ** n}\]`]; }
+  else { const b = R(1, 3); const r = (b / 10) ** n; rad = nt(r); ans = { vals: [b / 10] };
+    sol = [T`\[${rt(rad)}=${nt(b / 10)},\quad\text{mert}\quad ${nt(b / 10)}^{${n}}=${rad}\]`]; }
+  return { q: T`<p>Számítsd ki! Ha a kifejezés nincs értelmezve, írd be: <b>nincs</b>.</p>\[${rt(rad)}\]`, ans, fmt: 'szám vagy „nincs”',
+    hint: 'Keresd azt a számot, amelynek n-edik hatványa a gyökjel alatti szám. Páros gyökkitevőnél a gyökjel alatt nem állhat negatív szám, páratlannál igen.', sol };
+} };
+
+G.gyokkivitel = { ch: 'gyok', name: 'Kivitel a gyökjel alól', make() {
+  if (R(0, 2) > 0) { const m = P([2, 3, 5, 6, 7]); const k = R(2, 7); const N = k * k * m;
+    return { q: T`<p>Melyik szám kerül a négyzet helyére?</p>\[\sqrt{${N}}=\square\sqrt{${m}}\]`, ans: { vals: [k] }, fmt: 'egész szám',
+      hint: 'Bontsd fel a számot két tényezőre úgy, hogy az egyik négyzetszám legyen (4, 9, 16, 25, 36, 49 …).',
+      sol: [T`\[\sqrt{${N}}=\sqrt{${k * k}\cdot ${m}}=\sqrt{${k * k}}\cdot\sqrt{${m}}=${k}\sqrt{${m}}\]`] }; }
+  const m = P([2, 3, 4, 5]); const k = R(2, 4); const N = k ** 3 * m;
+  return { q: T`<p>Melyik szám kerül a négyzet helyére?</p>\[\sqrt[3]{${N}}=\square\sqrt[3]{${m}}\]`, ans: { vals: [k] }, fmt: 'egész szám',
+    hint: 'Bontsd fel a számot két tényezőre úgy, hogy az egyik köbszám legyen (8, 27, 64 …).',
+    sol: [T`\[\sqrt[3]{${N}}=\sqrt[3]{${k ** 3}\cdot ${m}}=${k}\sqrt[3]{${m}}\]`] };
+} };
+
+G.gyokazon = { ch: 'gyok', name: 'Azonosságok', make() {
+  const kind = R(0, 2);
+  if (kind === 0) { const s = P([2, 3, 5, 6]); const t = R(1, 3), u = R(2, 3); const a = s * t * t, b = s * u * u, v = s * t * u;
+    return { q: T`<p>Számítsd ki!</p>\[\sqrt{${a}}\cdot\sqrt{${b}}\]`, ans: { vals: [v] }, fmt: 'egész szám',
+      hint: T`Azonos gyökkitevőjű gyökök szorzata: \(\sqrt{a}\cdot\sqrt{b}=\sqrt{ab}\).`,
+      sol: [T`\[\sqrt{${a}}\cdot\sqrt{${b}}=\sqrt{${a * b}}=${v}\]`] }; }
+  if (kind === 1) { const s = P([2, 3, 5, 7]); const w = R(2, 6); const a = s * w * w;
+    return { q: T`<p>Számítsd ki!</p>\[\frac{\sqrt{${a}}}{\sqrt{${s}}}\]`, ans: { vals: [w] }, fmt: 'egész szám',
+      hint: T`Azonos gyökkitevőjű gyökök hányadosa: \(\dfrac{\sqrt{a}}{\sqrt{b}}=\sqrt{\dfrac{a}{b}}\).`,
+      sol: [T`\[\frac{\sqrt{${a}}}{\sqrt{${s}}}=\sqrt{\frac{${a}}{${s}}}=\sqrt{${w * w}}=${w}\]`] }; }
+  const s = P([2, 3]); const t = R(1, 2), u = R(1, 2); const a = s * t ** 3, b = s * s * u ** 3, v = s * t * u;
+  return { q: T`<p>Számítsd ki!</p>\[\sqrt[3]{${a}}\cdot\sqrt[3]{${b}}\]`, ans: { vals: [v] }, fmt: 'egész szám',
+    hint: T`\(\sqrt[3]{a}\cdot\sqrt[3]{b}=\sqrt[3]{ab}\), utána keresd meg, melyik szám köbe a szorzat.`,
+    sol: [T`\[\sqrt[3]{${a}}\cdot\sqrt[3]{${b}}=\sqrt[3]{${a * b}}=${v}\]`] };
+} };
+
+/* --- 3. Törtkitevő --- */
+G.tortertek = { ch: 'tort', name: 'Törtkitevős hatvány', make() {
+  const n = P([2, 2, 3, 3, 4]); const c = n === 2 ? P([2, 3, 4, 5, 6, 7, 9, 10]) : n === 3 ? P([2, 3, 4, 5, 10]) : P([2, 3]);
+  let m = P([1, 2, 3, -1, -2, -3]); if (c ** Math.abs(m) > 1000) m = Math.sign(m) * 2;
+  const recip = R(0, 3) === 0; const base = c ** n;
+  const baseTex = recip ? T`\left(\frac{1}{${base}}\right)` : String(base);
+  const ef = F(m, n); let expTex = ft(ef); if ((ef.d === 2 || ef.d === 4) && R(0, 1)) expTex = nt(m / n);
+  const val = recip ? fpow(F(1, c), m) : fpow(F(c), m);
+  const rv = c ** (n / ef.d); const rvT = recip ? T`\frac{1}{${rv}}` : String(rv);
+  const rootT = ef.d === 2 ? T`\sqrt{${recip ? T`\frac{1}{${base}}` : base}}` : T`\sqrt[${ef.d}]{${recip ? T`\frac{1}{${base}}` : base}}`;
+  return { q: T`<p>Számítsd ki számológép nélkül!</p>\[${baseTex}^{${expTex}}\]`, ans: { vals: [fv(val)] }, fmt: FMT.frac,
+    hint: 'Tizedes kitevőt írd át törtre. A tört nevezője a gyökkitevő, a számlálója a hatványkitevő; negatív kitevő → reciprok.',
+    sol: [T`\[${baseTex}^{${ft(ef)}}=\left(${rootT}\right)^{${ef.n}}=\left(${rvT}\right)^{${ef.n}}=${ft(val)}\]`] };
+} };
+
+G.kettohatvany = { ch: 'tort', name: 'Írd fel 2 hatványaként', make() {
+  const p = R(0, 3), n = P([2, 3, 4]), q = R(1, n - 1), rec = R(0, 2) === 0;
+  let e = F(p * n + q, n); if (rec) e = F(-e.n, e.d);
+  const root = n === 2 ? T`\sqrt{${2 ** q}}` : T`\sqrt[${n}]{${2 ** q}}`;
+  const core = (p > 0 ? String(2 ** p) : '') + root; const tex = rec ? T`\frac{1}{${core}}` : core;
+  const parts = (p > 0 ? T`${2 ** p}=2^{${p}},\qquad ` : '') + T`${root}=2^{${ft(F(q, n))}}`;
+  return { q: T`<p>Írd fel 2 hatványaként! Melyik szám kerül a négyzet helyére?</p>\[${tex}=2^{\,\square}\]`, ans: { vals: [fv(e)] }, fmt: FMT.frac,
+    hint: T`\(\sqrt{2^q}=2^{q/2}\), \(\sqrt[3]{2^q}=2^{q/3}\). Szorzásnál a kitevők összeadódnak, a reciprok kitevője az ellentett.`,
+    sol: (p === 0 && !rec) ? [T`\[${parts}\]`] : [T`\[${parts}\]`, T`\[${tex}=${rec ? T`\frac{1}{2^{${ft(F(p * n + q, n))}}}=` : ''}2^{${ft(e)}}\]`] };
+} };
+
+G.xhatvany = { ch: 'tort', name: 'Egyetlen hatványként', make() {
+  const a = P([2, 3, 4, 6]), c = P([2, 3, 4, 6]); const b = R(1, 5), d = R(1, 5); const mul = R(0, 1) === 1;
+  const rt = (i, e) => { const inner = e === 1 ? 'x' : T`x^{${e}}`; return i === 2 ? T`\sqrt{${inner}}` : T`\sqrt[${i}]{${inner}}`; };
+  const e = fadd(F(b, a), F(mul ? d : -d, c));
+  const tex = mul ? T`${rt(a, b)}\cdot ${rt(c, d)}` : T`\frac{${rt(a, b)}}{${rt(c, d)}}`;
+  return { q: T`<p>Írd fel egyetlen hatványként! (\(x>0\)) Melyik szám kerül a négyzet helyére?</p>\[${tex}=x^{\,\square}\]`, ans: { vals: [fv(e)] }, fmt: FMT.frac,
+    hint: T`Írd át a gyököket törtkitevőre: \(\sqrt[n]{x^m}=x^{m/n}\). Szorzásnál összeadod, osztásnál kivonod a kitevőket (közös nevezőre hozva).`,
+    sol: [T`\[x^{${ft(F(b, a))}}${mul ? '\\cdot' : ':'}x^{${ft(F(d, c))}}=x^{${ft(F(b, a))}${mul ? '+' : '-'}${ft(F(d, c))}}=x^{${ft(e)}}\]`] };
+} };
+
+/* --- 4. Exponenciális függvény --- */
+const EXPB = [{ t: '2', n: 2, d: 1 }, { t: '3', n: 3, d: 1 }, { t: T`\left(\frac{1}{2}\right)`, n: 1, d: 2 }];
+G.expjell = { ch: 'expfv', name: 'Függvény jellemzése', make() {
+  const A = P(EXPB); const u = R(-2, 2); const kind = R(0, 2); let v, k;
+  if (kind === 2) { k = A.n === 2 ? R(0, 3) : A.n === 3 ? R(0, 2) : R(-3, 0); v = -fv(fpow(F(A.n, A.d), k)); } else v = R(-3, 3);
+  const f = T`f(x)=${A.t}^{${xs(-u)}}${pt(v)}`;
+  if (kind === 0) return { q: T`<p>Mi a grafikon vízszintes aszimptotájának egyenlete? Add meg a hiányzó számot!</p>\[${f}\qquad y=\square\]`, ans: { vals: [v] }, fmt: 'egész szám',
+    hint: T`Az \(a^x\) aszimptotája az \(y=0\) egyenes. A függőleges eltolás az aszimptotát is eltolja.`,
+    sol: [T`Az alapfüggvény aszimptotája \(y=0\). A \(${pt(v) || '+0'}\) tag \(${Math.abs(v)}\)-vel ${v >= 0 ? 'felfelé' : 'lefelé'} tolja a grafikont, így az aszimptota: \(y=${v}\).`] };
+  if (kind === 1) { const val = fadd(fpow(F(A.n, A.d), -u), F(v));
+    return { q: T`<p>Hol metszi a grafikon az \(y\) tengelyt? Számítsd ki \(f(0)\)-t!</p>\[${f}\]`, ans: { vals: [fv(val)] }, fmt: FMT.frac,
+      hint: 'Helyettesíts x helyére 0-t.',
+      sol: [T`\[f(0)=${A.t}^{${-u}}${pt(v)}=${ft(fpow(F(A.n, A.d), -u))}${pt(v)}=${ft(val)}\]`] }; }
+  return { q: T`<p>Hol van a függvény zérushelye?</p>\[${f}\qquad x=\square\]`, ans: { vals: [u + k] }, fmt: 'egész szám',
+    hint: 'A zérushelyen f(x) = 0. Rendezd az egyenletet, majd hozd közös alapra.',
+    sol: [T`\[${A.t}^{${xs(-u)}}=${-v}=${A.t}^{${k}}\]`, T`\[${xs(-u)}=${k}\quad\Rightarrow\quad x=${u + k}\]`] };
+} };
+
+G.expossz = { ch: 'expfv', name: 'Melyik nagyobb?', make() {
+  const B = P([{ t: '2', v: 2 }, { t: '3', v: 3 }, { t: T`0{,}5`, v: .5 }, { t: T`\left(\frac{2}{3}\right)`, v: 2 / 3 }, { t: T`1{,}5`, v: 1.5 }]);
+  const L = [-2, -1, -0.5, 0.5, 1, 1.5, 2, 2.5, 3]; const p = P(L); let q = P(L); while (q === p) q = P(L);
+  const gt = (B.v > 1) === (p > q); const correct = gt ? 2 : 0;
+  return { q: T`<p>Melyik reláció kerül a négyzet helyére?</p>\[${B.t}^{${nt(p)}}\;\square\;${B.t}^{${nt(q)}}\]`, ans: { choice: ['<', '=', '>'], correct },
+    hint: 'Ha az alap nagyobb 1-nél, a függvény szigorúan nő: nagyobb kitevő → nagyobb érték. Ha az alap 0 és 1 közé esik, fordítva.',
+    sol: [T`Az alap \(${B.t}\) ${B.v > 1 ? 'nagyobb 1-nél, így a függvény szigorúan növekvő' : '0 és 1 közé esik, így a függvény szigorúan csökkenő'}. Mivel \(${nt(p)}${p > q ? '>' : '<'}${nt(q)}\), ezért \(${B.t}^{${nt(p)}}${gt ? '>' : '<'}${B.t}^{${nt(q)}}\).`] };
+} };
+
+/* --- 5. Exponenciális egyenletek --- */
+G.expA = { ch: 'expegy', name: 'A) Közös alap', make() {
+  const p = P([2, 3, 5]); const maxI = p === 2 ? 4 : p === 3 ? 3 : 2; let tex, x, sol;
+  if (R(0, 1) === 0) { const i = R(1, maxI); let r; do { r = R(-3, 5); } while (r === 0 || p ** Math.abs(r) > 243);
+    const right = r > 0 ? String(p ** r) : T`\frac{1}{${p ** (-r)}}`; x = F(r, i);
+    tex = T`${p ** i}^{x}=${right}`; sol = [T`\[${p}^{${yk(i).replace('y', 'x')}}=${p}^{${r}}\]`, T`\[${yk(i).replace('y', 'x')}=${r}\quad\Rightarrow\quad x=${ft(x)}\]`]; }
+  else { const top = p === 5 ? 2 : 3; const i = R(1, top); let j = R(1, top); while (j === i) j = R(1, top); const s = R(-2, 3), t = R(-2, 3);
+    x = F(j * t - i * s, i - j);
+    tex = T`${p ** i}^{${xs(s)}}=${p ** j}^{${xs(t)}}`;
+    sol = [T`\[${p}^{${mulX(i, xs(s))}}=${p}^{${mulX(j, xs(t))}}\]`, T`\[${mulX(i, xs(s))}=${mulX(j, xs(t))}\quad\Rightarrow\quad x=${ft(x)}\]`]; }
+  return { q: T`<p>Oldd meg a valós számok halmazán!</p>\[${tex}\]`, ans: { vals: [fv(x)] }, fmt: FMT.frac,
+    hint: T`Írd fel mindkét oldalt \(${p}\) hatványaként. Ha \(a^{A}=a^{B}\), akkor \(A=B\).`, sol };
+} };
+
+G.expB = { ch: 'expegy', name: 'B) Kiemelés', make() {
+  const p = P([2, 3, 5]); let tex, x0, sol;
+  if (R(0, 2) > 0) { const a = R(1, 2); const plus = R(0, 1) === 1; const s = plus ? '+' : '-'; const K = plus ? p ** a + 1 : p ** a - 1;
+    x0 = R(0, p === 5 ? 2 : 3); const Rv = K * p ** x0;
+    tex = T`${p}^{x+${a}}${s}${p}^{x}=${Rv}`;
+    sol = [T`\[${p}^{x}\cdot ${p}^{${a}}${s}${p}^{x}=${Rv}\]`, T`\[${p}^{x}\left(${p ** a}${s}1\right)=${Rv}\quad\Rightarrow\quad ${K}\cdot ${p}^{x}=${Rv}\]`, T`\[${p}^{x}=${p ** x0}\quad\Rightarrow\quad x=${x0}\]`]; }
+  else { x0 = R(1, p === 5 ? 2 : 3); const Rv = (p * p + 1) * p ** (x0 - 1);
+    tex = T`${p}^{x+1}+${p}^{x-1}=${Rv}`;
+    sol = [T`Emeljük ki a legkisebb hatványt, \(${p}^{x-1}\)-et:`, T`\[${p}^{x-1}\left(${p}^{2}+1\right)=${Rv}\quad\Rightarrow\quad ${p * p + 1}\cdot ${p}^{x-1}=${Rv}\]`, T`\[${p}^{x-1}=${p ** (x0 - 1)}\quad\Rightarrow\quad x-1=${x0 - 1}\quad\Rightarrow\quad x=${x0}\]`]; }
+  return { q: T`<p>Oldd meg a valós számok halmazán!</p>\[${tex}\]`, ans: { vals: [x0] }, fmt: 'egész szám',
+    hint: T`Bontsd szét a hatványt: \(${p}^{x+1}=${p}\cdot ${p}^{x}\). Emeld ki \(${p}^{x}\)-et (vagy a legkisebb hatványt), így \(${p}^{x}=\text{szám}\) alakot kapsz.`, sol };
+} };
+
+G.expC = { ch: 'expegy', name: 'C) Új változó', make() {
+  const p = P([2, 3]); const k1 = R(0, 2); const y1 = p ** k1; let y2, k2 = null;
+  if (R(0, 1)) { do { k2 = R(0, 2); } while (k2 === k1); y2 = p ** k2; } else { do { y2 = -R(1, 6); } while (y2 === -y1); }
+  const B = y1 + y2, C = y1 * y2;
+  const tex = T`${p * p}^{x}${linCoef(B, T`\cdot ${p}^{x}`).replace(/^([+-])\\cdot /, '$1')}${cst(C)}=0`;
+  const yq = T`y^{2}${linCoef(B, 'y')}${cst(C)}=0`;
+  const sol = [T`Legyen \(y=${p}^{x}>0\). Ekkor \(${p * p}^{x}=\left(${p}^{x}\right)^{2}=y^{2}\).`, T`\[${yq}\quad\Rightarrow\quad y_1=${y1},\; y_2=${y2}\]`];
+  const vals = [k1];
+  if (y2 < 0) sol.push(T`Az \(y_2=${y2}\) nem lehet, mert \(${p}^{x}\) mindig pozitív.`);
+  sol.push(T`\[${p}^{x}=${y1}\quad\Rightarrow\quad x=${k1}\]`);
+  if (k2 !== null) { vals.push(k2); sol.push(T`\[${p}^{x}=${y2}\quad\Rightarrow\quad x=${k2}\]`); }
+  return { q: T`<p>Oldd meg a valós számok halmazán! Ha több megoldás van, pontosvesszővel válaszd el őket.</p>\[${tex}\]`, ans: { vals }, fmt: FMT.set,
+    hint: T`Vezess be új változót: \(y=${p}^{x}\). Ekkor \(${p * p}^{x}=y^2\), és másodfokú egyenletet kapsz. Ne feledd: \(y>0\)!`, sol };
+} };
+
+/* --- 6. Logaritmus fogalma --- */
+G.logertek = { ch: 'log', name: 'Logaritmus kiszámítása', make() {
+  const c = P([2, 3, 5, 10]); const i = P(c === 10 ? [1, 1, -1] : [1, 1, 2, -1]);
+  const baseTex = i === 1 ? String(c) : i === 2 ? String(c * c) : T`\frac{1}{${c}}`;
+  const L = (i === 1 && c === 10) ? T`\lg` : T`\log_{${baseTex}}`;
+  let jn, jd = 1, argTex;
+  if (R(0, 3) === 0) { jn = P([1, 3, -1]); jd = 2; argTex = jn === 1 ? T`\sqrt{${c}}` : jn === 3 ? T`${c}\sqrt{${c}}` : T`\frac{1}{\sqrt{${c}}}`; }
+  else { do { jn = R(-3, 4); } while (c ** Math.abs(jn) > 10000); argTex = jn >= 0 ? String(c ** jn) : T`\frac{1}{${c ** (-jn)}}`; }
+  const ans = F(jn, jd * i); const bpow = i === 1 ? String(c) : i === 2 ? T`${c}^{2}` : T`${c}^{-1}`;
+  return { q: T`<p>Számítsd ki!</p>\[${L}\,${argTex}\]`, ans: { vals: [fv(ans)] }, fmt: FMT.frac,
+    hint: T`\(\log_a b\) az a kitevő, amelyre \(a\)-t emelve \(b\)-t kapunk. Írd fel az alapot és a számot is \(${c}\) hatványaként!`,
+    sol: [T`\[${L}\,${argTex}=y\iff \left(${bpow}\right)^{y}=${argTex}\]`, (i === 1 ? T`\[${c}^{y}=${c}^{${ft(F(jn, jd))}}\quad\Rightarrow\quad y=${ft(ans)}\]` : T`\[${c}^{${yk(i)}}=${c}^{${ft(F(jn, jd))}}\quad\Rightarrow\quad ${yk(i)}=${ft(F(jn, jd))}\quad\Rightarrow\quad y=${ft(ans)}\]`)] };
+} };
+
+G.logdef = { ch: 'log', name: 'x a definícióból', make() {
+  if (R(0, 1) === 0) { const b = P([{ t: '2', n: 2, d: 1 }, { t: '3', n: 3, d: 1 }, { t: '4', n: 4, d: 1 }, { t: '5', n: 5, d: 1 }, { t: '10', n: 10, d: 1 }, { t: T`\frac{1}{2}`, n: 1, d: 2 }]);
+    const k = b.n >= 4 ? R(-2, 2) : R(-3, 3); const x = fpow(F(b.n, b.d), k); const L = b.n === 10 ? T`\lg` : T`\log_{${b.t}}`;
+    return { q: T`<p>Határozd meg \(x\) értékét!</p>\[${L} x=${k}\]`, ans: { vals: [fv(x)] }, fmt: FMT.frac,
+      hint: T`\(\log_a x=c \iff x=a^{c}\).`, sol: [T`\[x=${b.d === 1 ? b.t : T`\left(${b.t}\right)`}^{${k}}=${ft(x)}\]`] }; }
+  const c = P([2, 3, 4, 5]); let k = P([2, 3, -1, -2]); if (c >= 4 && k === 3) k = 2; const N = fpow(F(c), k);
+  return { q: T`<p>Határozd meg \(x\) értékét!</p>\[\log_{x} ${ft(N)}=${k}\]`, ans: { vals: [c] }, fmt: 'egész szám',
+    hint: T`A definíció szerint \(x^{${k}}=${ft(N)}\). Az alap csak pozitív és 1-től különböző szám lehet!`,
+    sol: [T`\[x^{${k}}=${ft(N)}=${c}^{${k}}\]`, T`Mivel az alap pozitív, \(x=${c}\).${k % 2 === 0 ? T` (A \(-${c}\) nem lehet alap.)` : ''}`] };
+} };
+
+G.logalap = { ch: 'log', name: 'a^(log_a b) = b', make() {
+  const kind = R(0, 3);
+  if (kind === 3) { const a = P([2, 3]); const m = P([2, 3, 5, 7].filter(t => t !== a));
+    return { q: T`<p>Számítsd ki!</p>\[${a * a}^{\log_{${a}} ${m}}\]`, ans: { vals: [m * m] }, fmt: 'egész szám',
+      hint: T`Írd fel az alapot \(${a}\) hatványaként, és használd: \(a^{\log_a b}=b\).`,
+      sol: [T`\[${a * a}^{\log_{${a}} ${m}}=\left(${a}^{2}\right)^{\log_{${a}} ${m}}=\left(${a}^{\log_{${a}} ${m}}\right)^{2}=${m}^{2}=${m * m}\]`] }; }
+  const a = P([2, 3, 5, 10]); const L = lgOf(a);
+  if (kind === 0) { const m = P([2, 3, 4, 6, 7, 11].filter(t => t !== a));
+    return { q: T`<p>Számítsd ki!</p>\[${a}^{${L} ${m}}\]`, ans: { vals: [m] }, fmt: 'egész szám', hint: T`\(a^{\log_a b}=b\): ez maga a logaritmus definíciója.`, sol: [T`\[${a}^{${L} ${m}}=${m}\]`] }; }
+  if (kind === 1) { const k = P([2, 3]); const m = P([2, 3, 4].filter(t => t !== a));
+    return { q: T`<p>Számítsd ki!</p>\[${a}^{${k}${L} ${m}}\]`, ans: { vals: [m ** k] }, fmt: 'egész szám', hint: T`\(a^{k\cdot\log_a b}=\left(a^{\log_a b}\right)^{k}\).`,
+      sol: [T`\[${a}^{${k}${L} ${m}}=\left(${a}^{${L} ${m}}\right)^{${k}}=${m}^{${k}}=${m ** k}\]`] }; }
+  const m = P([2, 3, 4, 7].filter(t => t !== a));
+  return { q: T`<p>Számítsd ki!</p>\[${a}^{1+${L} ${m}}\]`, ans: { vals: [a * m] }, fmt: 'egész szám', hint: T`\(a^{1+x}=a\cdot a^{x}\).`,
+    sol: [T`\[${a}^{1+${L} ${m}}=${a}^{1}\cdot ${a}^{${L} ${m}}=${a}\cdot ${m}=${a * m}\]`] };
+} };
+
+/* --- 7. Azonosságok --- */
+G.logossz = { ch: 'azon', name: 'Összevonás', make() {
+  const kind = R(0, 2);
+  if (kind === 0) { const [a, b] = P([[2, 5], [4, 25], [20, 5], [50, 2], [8, 125], [25, 40], [50, 20], [4, 250], [200, 5], [2, 50], [0.5, 20], [0.2, 50], [0.25, 400]]);
+    const prod = +(a * b).toFixed(8); const k = Math.round(Math.log10(prod));
+    return { q: T`<p>Számítsd ki számológép nélkül!</p>\[\lg ${nt(a)}+\lg ${nt(b)}\]`, ans: { vals: [k] }, fmt: 'egész szám',
+      hint: T`\(\lg x+\lg y=\lg(xy)\).`, sol: [T`\[\lg ${nt(a)}+\lg ${nt(b)}=\lg\left(${nt(a)}\cdot ${nt(b)}\right)=\lg ${nt(prod)}=${k}\]`] }; }
+  if (kind === 1) { const b = P([2, 3, 5]); const C = P([2, 3, 5, 6, 7]); const k = R(1, b === 5 ? 2 : 3); const A = C * b ** k; const L = lgOf(b);
+    return { q: T`<p>Számítsd ki számológép nélkül!</p>\[${L} ${A}-${L} ${C}\]`, ans: { vals: [k] }, fmt: 'egész szám',
+      hint: T`\(\log_a x-\log_a y=\log_a\dfrac{x}{y}\).`, sol: [T`\[${L} ${A}-${L} ${C}=${L}\frac{${A}}{${C}}=${L} ${b ** k}=${k}\]`] }; }
+  const e = P([{ b: 10, m: 2, u: 5, w: '4', op: '+', k: 2 }, { b: 10, m: 3, u: 2, w: '125', op: '+', k: 3 }, { b: 10, m: 2, u: 2, w: '25', op: '+', k: 2 },
+    { b: 10, m: 3, u: 5, w: '8', op: '+', k: 3 }, { b: 6, m: 2, u: 3, w: '4', op: '+', k: 2 }, { b: 2, m: 3, u: 2, w: '4', op: '+', k: 5 },
+    { b: 10, m: 2, u: 50, w: '25', op: '-', k: 2 }, { b: 2, m: 2, u: 12, w: '9', op: '-', k: 4 }, { b: 3, m: 2, u: 6, w: T`\frac{3}{4}`, op: '+', k: 3 }]);
+  const L = lgOf(e.b);
+  const comb = e.op === '+' ? T`${L}\left(${e.u ** e.m}\cdot ${e.w}\right)` : T`${L}\frac{${e.u ** e.m}}{${e.w}}`;
+  return { q: T`<p>Számítsd ki számológép nélkül!</p>\[${e.m}${L} ${e.u}${e.op}${L} ${e.w}\]`, ans: { vals: [e.k] }, fmt: 'egész szám',
+    hint: T`Először a szorzót vidd fel kitevőbe: \(k\cdot\log_a x=\log_a x^{k}\). Utána vond össze egy logaritmusba.`,
+    sol: [T`\[${e.m}${L} ${e.u}${e.op}${L} ${e.w}=${L} ${e.u}^{${e.m}}${e.op}${L} ${e.w}=${comb}=${L} ${e.b ** e.k}=${e.k}\]`] };
+} };
+
+G.attere = { ch: 'azon', name: 'Áttérés, hányados', make() {
+  if (R(0, 2) > 0) { const c = P([2, 3, 5]); const top = c === 5 ? 3 : 4; const m = R(1, top); let n = R(1, top); while (n === m) n = R(1, top);
+    const L = P([T`\lg`, T`\log_{7}`, T`\log_{6}`]);
+    return { q: T`<p>Számítsd ki számológép nélkül!</p>\[\frac{${L} ${c ** m}}{${L} ${c ** n}}\]`, ans: { vals: [m / n] }, fmt: FMT.frac,
+      hint: T`Írd fel a számokat \(${c}\) hatványaként, és hozd ki a kitevőt szorzónak. Vigyázz: \(\dfrac{\lg a}{\lg b}\ne\lg\dfrac{a}{b}\)!`,
+      sol: [T`\[\frac{${L} ${c}^{${m}}}{${L} ${c}^{${n}}}=\frac{${m}\cdot ${L} ${c}}{${n}\cdot ${L} ${c}}=${ft(F(m, n))}\]`] }; }
+  const a = P([2, 3]); const mid = P([3, 5, 7].filter(x => x !== a)); const k = R(2, 4);
+  return { q: T`<p>Számítsd ki számológép nélkül!</p>\[\log_{${a}} ${mid}\cdot\log_{${mid}} ${a ** k}\]`, ans: { vals: [k] }, fmt: 'egész szám',
+    hint: T`Térj át 10-es alapra: \(\log_a b=\dfrac{\lg b}{\lg a}\). A szorzatban valami ki fog esni.`,
+    sol: [T`\[\frac{\lg ${mid}}{\lg ${a}}\cdot\frac{\lg ${a ** k}}{\lg ${mid}}=\frac{\lg ${a ** k}}{\lg ${a}}=\log_{${a}} ${a ** k}=${k}\]`] };
+} };
+
+G.lg23 = { ch: 'azon', name: 'lg 2 és lg 3 segítségével', make() {
+  let a, b, c, N;
+  do { a = R(-1, 3); b = R(0, 2); c = R(-1, 1); N = 2 ** a * 3 ** b * 10 ** c; }
+  while (Math.abs(N - 1) < 1e-9 || N > 500 || Math.abs(N * 1000 - Math.round(N * 1000)) > 1e-6 || (a === 0 && b === 0));
+  const val = a * 0.301 + b * 0.477 + c;
+  const fac = [], lin2 = [];
+  if (a) { fac.push(a === 1 ? '2' : T`2^{${a}}`); lin2.push(T`${a === 1 ? '' : a === -1 ? '-' : a}\lg 2`); }
+  if (b) { fac.push(b === 1 ? '3' : T`3^{${b}}`); lin2.push(T`${b === 1 ? '' : b}\lg 3`); }
+  if (c) { fac.push(c === 1 ? '10' : T`10^{${c}}`); lin2.push(String(c)); }
+  const linT = lin2.join('+').replace(/\+-/g, '-');
+  return { q: T`<p>Tudjuk, hogy \(\lg 2\approx 0{,}301\) és \(\lg 3\approx 0{,}477\). Számítsd ki ezek segítségével, számológép nélkül!</p>\[\lg ${nt(N)}\]`,
+    ans: { vals: [val], tol: 0.0015 }, fmt: 'tizedes tört, 3 tizedesjegy',
+    hint: T`Írd fel a számot 2, 3 és 10 hatványainak szorzataként (pl. \(1{,}5=\frac{3}{2}\), \(5=\frac{10}{2}\)), aztán bontsd szét az azonosságokkal.`,
+    sol: [T`\[\lg ${nt(N)}=\lg\left(${fac.join('\\cdot ')}\right)=${linT}\approx ${nt(+val.toFixed(3))}\]`] };
+} };
+
+G.calc = { ch: 'azon', name: 'Számológéppel', make() {
+  const b = P([2, 3, 5, 7, 0.5, 1.05, 1.1]); let c, v;
+  do { c = P([3, 5, 6, 7, 10, 20, 50, 100]); v = Math.log(c) / Math.log(b); } while (Math.abs(v - Math.round(v)) < 1e-9);
+  return { q: T`<p>Számítsd ki számológéppel, két tizedesjegyre kerekítve!</p>\[\log_{${nt(b)}} ${c}\]`, ans: { vals: [v], tol: 0.006 }, fmt: 'tizedes tört, pl. 2,73',
+    hint: T`Térj át 10-es alapra: \(\log_a b=\dfrac{\lg b}{\lg a}\). A számológépen ez a „log” gomb.`,
+    sol: [T`\[\log_{${nt(b)}} ${c}=\frac{\lg ${c}}{\lg ${nt(b)}}\approx\frac{${nt(+Math.log10(c).toFixed(4))}}{${nt(+Math.log10(b).toFixed(4))}}\approx ${nt(+v.toFixed(2))}\]`] };
+} };
+
+/* --- 8. Logaritmusfüggvény --- */
+G.logjell = { ch: 'logfv', name: 'Függvény jellemzése', make() {
+  const A = P([{ t: '2', n: 2, d: 1 }, { t: '3', n: 3, d: 1 }, { t: T`\frac{1}{2}`, n: 1, d: 2 }]);
+  const u = R(-3, 3), v = R(-2, 2), kind = R(0, 2);
+  const arg = u === 0 ? ' x' : T`\left(${xs(-u)}\right)`;
+  const f = T`f(x)=\log_{${A.t}}${arg}${pt(v)}`;
+  if (kind === 0) return { q: T`<p>Add meg az értelmezési tartományt!</p>\[${f}\qquad x>\square\]`, ans: { vals: [u] }, fmt: 'egész szám',
+    hint: 'A logaritmus mögötti kifejezésnek pozitívnak kell lennie.', sol: [T`\[${xs(-u)}>0\quad\Rightarrow\quad x>${u}\]`, T`Az aszimptota is itt van: \(x=${u}\).`] };
+  if (kind === 1) { const z = fadd(F(u), fpow(F(A.n, A.d), -v));
+    return { q: T`<p>Hol van a függvény zérushelye?</p>\[${f}\qquad x=\square\]`, ans: { vals: [fv(z)] }, fmt: FMT.frac,
+      hint: T`A zérushelyen \(f(x)=0\). Rendezd: \(\log_a(\dots)=\text{szám}\), majd használd a definíciót.`,
+      sol: [T`\[\log_{${A.t}}${arg}=${-v}\quad\Rightarrow\quad ${xs(-u)}=${A.d === 1 ? A.t : T`\left(${A.t}\right)`}^{${-v}}=${ft(fpow(F(A.n, A.d), -v))}\quad\Rightarrow\quad x=${ft(z)}\]`] }; }
+  const k = A.n === 2 ? R(0, 3) : A.n === 3 ? R(0, 2) : R(-3, 0); const x0 = u + fv(fpow(F(A.n, A.d), k));
+  return { q: T`<p>Számítsd ki a helyettesítési értéket!</p>\[${f}\qquad f(${x0})=\;?\]`, ans: { vals: [k + v] }, fmt: 'egész szám',
+    hint: 'Helyettesíts be, és számold ki a logaritmust a definícióval.',
+    sol: [T`\[f(${x0})=\log_{${A.t}}${fpow(F(A.n, A.d), k).d === 1 ? ' ' + ft(fpow(F(A.n, A.d), k)) : ft(fpow(F(A.n, A.d), k))}${pt(v)}=${k}${pt(v)}=${k + v}\]`] };
+} };
+
+G.logcmp = { ch: 'logfv', name: 'Melyik nagyobb?', make() {
+  if (R(0, 1) === 0) { const B = P([{ t: '2', v: 2 }, { t: '3', v: 3 }, { t: T`0{,}5`, v: .5 }, { t: T`\frac{1}{3}`, v: 1 / 3 }]);
+    const L = [2, 3, 5, 7, 10, 0.5]; const p = P(L); let q = P(L); while (q === p) q = P(L);
+    const gt = (B.v > 1) === (p > q);
+    return { q: T`<p>Melyik reláció kerül a négyzet helyére?</p>\[\log_{${B.t}} ${nt(p)}\;\square\;\log_{${B.t}} ${nt(q)}\]`, ans: { choice: ['<', '=', '>'], correct: gt ? 2 : 0 },
+      hint: 'Ha az alap nagyobb 1-nél, a logaritmusfüggvény szigorúan nő; ha 0 és 1 közé esik, szigorúan csökken.',
+      sol: [T`Az alap ${B.v > 1 ? 'nagyobb 1-nél, a függvény szigorúan nő' : '0 és 1 közé esik, a függvény szigorúan csökken'}. Mivel \(${nt(p)}${p > q ? '>' : '<'}${nt(q)}\), ezért \(\log_{${B.t}} ${nt(p)}${gt ? '>' : '<'}\log_{${B.t}} ${nt(q)}\).`] }; }
+  const a = P([2, 3]); const m = P(a === 2 ? [3, 5, 6, 7, 8, 10, 12, 16, 20] : [2, 5, 8, 9, 10, 20, 27, 30]); const k = R(1, 3); const ak = a ** k;
+  const c = m > ak ? 2 : m < ak ? 0 : 1;
+  return { q: T`<p>Melyik reláció kerül a négyzet helyére?</p>\[\log_{${a}} ${m}\;\square\;${k}\]`, ans: { choice: ['<', '=', '>'], correct: c },
+    hint: T`Írd fel a jobb oldalt is \(${a}\)-es alapú logaritmusként: \(${k}=\log_{${a}} ${ak}\).`,
+    sol: [T`\(${k}=\log_{${a}} ${ak}\), és a függvény szigorúan nő, ezért \(\log_{${a}} ${m}${['<', '=', '>'][c]}${k}\).`] };
+} };
+
+/* --- 9. Logaritmikus egyenletek --- */
+G.logA = { ch: 'logegy', name: 'A) Definíció alapján', make() {
+  const b = P([2, 3, 5, 10]); const k = b === 2 ? R(0, 4) : b === 3 ? R(0, 3) : R(0, 2); const p = P([1, 1, 2, 3]); const x0 = R(-3, 6); const q = b ** k - p * x0;
+  const L = lgOf(b);
+  return { q: T`<p>Oldd meg a valós számok halmazán!</p>\[${L}\left(${lin(p, q)}\right)=${k}\]`, ans: { vals: [x0] }, fmt: 'egész szám',
+    hint: T`\(\log_a(\dots)=c\) esetén \((\dots)=a^{c}\). Ne felejtsd el a feltételt: a logaritmus mögött pozitív szám áll.`,
+    sol: [T`Feltétel: \(${lin(p, q)}>0\).`, T`\[${lin(p, q)}=${b}^{${k}}=${b ** k}\quad\Rightarrow\quad ${p === 1 ? '' : p}x=${b ** k - q}\quad\Rightarrow\quad x=${x0}\]`, T`Ellenőrzés: \(${lin(p, q).replace('x', '\\cdot(' + x0 + ')').replace(/^\\cdot/, '')}=${b ** k}>0\), tehát jó.`] };
+} };
+
+const LOGB_POOL = [[10, 1, 3, 2], [10, 1, -3, 5], [10, 1, 9, 1], [10, 2, 15, 5], [10, 2, -15, 20], [10, 2, 21, 4], [2, 3, 2, 2], [2, 3, -2, 4], [2, 3, 7, 1], [2, 4, 6, 2], [2, 4, -6, 8], [2, 4, 15, 1], [3, 2, 8, 1], [3, 3, 6, 3], [3, 3, -6, 9], [2, 5, 4, 4], [2, 5, -4, 8], [5, 2, 24, 1], [2, 6, 12, 4]];
+G.logB = { ch: 'logegy', name: 'B) Azonossággal', make() {
+  if (R(0, 2) > 0) { const [b, k, d, r] = P(LOGB_POOL); const N = b ** k; const other = -N / r; const L = lgOf(b);
+    return { q: T`<p>Oldd meg a valós számok halmazán!</p>\[${L} x+${L}\left(${xs(d)}\right)=${k}\]`, ans: { vals: [r] }, fmt: 'egész szám',
+      hint: T`Első lépés a feltétel: \(x>0\) és \(${xs(d)}>0\). Utána vond össze: \(\log_a x+\log_a y=\log_a(xy)\).`,
+      sol: [T`Feltétel: \(x>${Math.max(0, -d)}\).`, T`\[${L}\bigl(x(${xs(d)})\bigr)=${k}\quad\Rightarrow\quad x(${xs(d)})=${N}\]`, T`\[x^{2}${d > 0 ? '+' : '-'}${Math.abs(d) === 1 ? '' : Math.abs(d)}x-${N}=0\quad\Rightarrow\quad x_1=${r},\; x_2=${other}\]`, T`Az \(x_2=${other}\) nem felel meg a feltételnek, így a megoldás: \(x=${r}\).`] }; }
+  const x0 = R(1, 6); const p = R(1, 4); let r = R(1, 4); while (r === p) r = R(1, 4); let q; do { q = R(-3, 5); } while (p * x0 + q <= 0); const s = p * x0 + q - r * x0;
+  return { q: T`<p>Oldd meg a valós számok halmazán!</p>\[\lg\left(${lin(p, q)}\right)=\lg\left(${lin(r, s)}\right)\]`, ans: { vals: [x0] }, fmt: 'egész szám',
+    hint: T`A logaritmusfüggvény szigorúan monoton, ezért \(\lg A=\lg B\) esetén \(A=B\). Végül ellenőrizd, hogy mindkét oldalon pozitív szám áll-e a logaritmus mögött.`,
+    sol: [T`\[${lin(p, q)}=${lin(r, s)}\quad\Rightarrow\quad ${p - r === 1 ? '' : p - r === -1 ? '-' : p - r}x=${s - q}\quad\Rightarrow\quad x=${x0}\]`, T`Ellenőrzés: mindkét oldalon \(\lg ${p * x0 + q}\) áll, és \(${p * x0 + q}>0\), tehát jó.`] };
+} };
+
+G.logC = { ch: 'logegy', name: 'C) Új változó', make() {
+  const b = P([2, 3, 10]); const y1 = R(-2, 3); let y2 = R(-2, 3); while (y2 === y1) y2 = R(-2, 3);
+  const B = y1 + y2, C = y1 * y2; const L = lgOf(b);
+  const tex = T`\left(${L} x\right)^{2}${linCoef(B, T`${L} x`)}${cst(C)}=0`;
+  const x1 = fpow(F(b), y1), x2 = fpow(F(b), y2);
+  return { q: T`<p>Oldd meg a valós számok halmazán! Ha több megoldás van, pontosvesszővel válaszd el őket.</p>\[${tex}\]`, ans: { vals: [fv(x1), fv(x2)] }, fmt: FMT.set,
+    hint: T`Legyen \(y=${L} x\). Másodfokú egyenletet kapsz; itt \(y\) lehet negatív is! Végül \(x=${b}^{y}\).`,
+    sol: [T`Feltétel: \(x>0\). Legyen \(y=${L} x\):`, T`\[y^{2}${linCoef(B, 'y')}${cst(C)}=0\quad\Rightarrow\quad y_1=${y1},\; y_2=${y2}\]`, T`\[x_1=${b}^{${y1}}=${ft(x1)},\qquad x_2=${b}^{${y2}}=${ft(x2)}\]`] };
+} };
+
+G.logD = { ch: 'logegy', name: 'D) Logaritmussal (sz)', make() {
+  const kind = R(0, 2); let tex, v, sol;
+  if (kind === 0) { const a = P([2, 3, 5, 7, 1.05, 1.2]); let c; do { c = P([5, 7, 10, 15, 20, 50, 100]); v = Math.log(c) / Math.log(a); } while (Math.abs(v - Math.round(v)) < 1e-9);
+    tex = T`${nt(a)}^{x}=${c}`; sol = [T`\[x=\log_{${nt(a)}} ${c}=\frac{\lg ${c}}{\lg ${nt(a)}}\approx ${nt(+v.toFixed(2))}\]`]; }
+  else if (kind === 1) { const K = P([2, 3, 4, 5]); const a = P([2, 3]); let m; do { m = P([5, 7, 10, 20]); v = Math.log(m) / Math.log(a); } while (Math.abs(v - Math.round(v)) < 1e-9);
+    tex = T`${K}\cdot ${a}^{x}=${K * m}`; sol = [T`\[${a}^{x}=${m}\quad\Rightarrow\quad x=\frac{\lg ${m}}{\lg ${a}}\approx ${nt(+v.toFixed(2))}\]`]; }
+  else { const a = P([2, 3, 5]); let c, w; do { c = P([7, 10, 15, 20, 40]); w = Math.log(c) / Math.log(a); } while (Math.abs(w - Math.round(w)) < 1e-9); v = w - 1;
+    tex = T`${a}^{x+1}=${c}`; sol = [T`\[x+1=\frac{\lg ${c}}{\lg ${a}}\approx ${nt(+w.toFixed(3))}\quad\Rightarrow\quad x\approx ${nt(+v.toFixed(2))}\]`]; }
+  return { q: T`<p>Oldd meg számológéppel! Az eredményt két tizedesjegyre kerekítsd.</p>\[${tex}\]`, ans: { vals: [v], tol: 0.006 }, fmt: 'tizedes tört, pl. 2,81',
+    hint: T`Ha \(a^{x}=b\), és \(b\) nem írható fel \(a\) hatványaként: \(x=\log_a b=\dfrac{\lg b}{\lg a}\).`, sol };
+} };
+
+/* --- 10. Alkalmazások --- */
+G.kamat = { ch: 'alk', name: 'Kamatos kamat', make() {
+  const T0 = R(2, 20) * 50000, p = R(2, 8), q = 1 + p / 100;
+  if (R(0, 1) === 0) { const n = R(2, 10); const val = T0 * q ** n;
+    return { q: `<p>${big(T0)} Ft-ot beteszünk a bankba évi ${p}%-os kamatos kamatra. Mennyi pénzünk lesz ${n} év múlva? (Ft-ra kerekítve)</p>`,
+      ans: { vals: [Math.round(val)], tolRel: 0.0005 }, fmt: 'egész szám (Ft)',
+      hint: T`\(T_n=T_0\cdot\left(1+\frac{p}{100}\right)^{n}\)`,
+      sol: [T`\[T_{${n}}=${bigT(T0)}\cdot ${nt(q)}^{${n}}\approx ${bigT(val)}\ \text{Ft}\]`] }; }
+  const m = P([1.5, 2, 3]); const ex = Math.log(m) / Math.log(q); const n = Math.ceil(ex);
+  return { q: `<p>${big(T0)} Ft-ot beteszünk a bankba évi ${p}%-os kamatos kamatra. Hány év múlva éri el vagy haladja meg először a pénzünk a ${big(T0 * m)} Ft-ot?</p>`,
+    ans: { vals: [n] }, fmt: 'egész szám (év)',
+    hint: T`Írd fel: \(${bigT(T0)}\cdot ${nt(q)}^{n}\ge ${bigT(T0 * m)}\). Oszd el, majd vegyél logaritmust. A végén felfelé kerekíts!`,
+    sol: [T`\[${nt(q)}^{n}\ge ${nt(m)}\quad\Rightarrow\quad n\ge\frac{\lg ${nt(m)}}{\lg ${nt(q)}}\approx ${nt(+ex.toFixed(2))}\]`, `Tehát ${n} év múlva.`] };
+} };
+
+G.csokk = { ch: 'alk', name: 'Értékcsökkenés', make() {
+  const V0 = R(3, 12) * 1000000; const p = P([5, 8, 10, 12, 15, 20]); const q = 1 - p / 100;
+  if (R(0, 1) === 0) { const n = R(2, 6); const val = V0 * q ** n;
+    return { q: `<p>Egy ${big(V0)} Ft-os autó értéke évente ${p}%-kal csökken. Mennyit ér ${n} év múlva? (Ft-ra kerekítve)</p>`,
+      ans: { vals: [Math.round(val)], tolRel: 0.0005 }, fmt: 'egész szám (Ft)',
+      hint: T`Csökkenésnél a szorzó \(q=1-\frac{p}{100}=${nt(q)}\).`,
+      sol: [T`\[${bigT(V0)}\cdot ${nt(q)}^{${n}}\approx ${bigT(val)}\ \text{Ft}\]`] }; }
+  const ex = Math.log(0.5) / Math.log(q); const n = Math.floor(ex) + 1;
+  return { q: `<p>Egy ${big(V0)} Ft-os autó értéke évente ${p}%-kal csökken. Hány év múlva ér először kevesebbet, mint az eredeti ár fele?</p>`,
+    ans: { vals: [n] }, fmt: 'egész szám (év)',
+    hint: T`\(${nt(q)}^{n}<0{,}5\). Logaritmus után vigyázz: \(\lg ${nt(q)}\) negatív, osztáskor megfordul a reláció!`,
+    sol: [T`\[n>\frac{\lg 0{,}5}{\lg ${nt(q)}}\approx ${nt(+ex.toFixed(2))}\]`, `Tehát ${n} év múlva.`] };
+} };
+
+G.felez = { ch: 'alk', name: 'Felezési idő', make() {
+  const Th = P([3, 5, 8, 10, 12, 20]); const N0 = P([80, 100, 160, 200, 320, 400, 640]);
+  if (R(0, 1) === 0) { const k = R(1, 5); const t = Th * k; const val = N0 / 2 ** k;
+    return { q: `<p>Egy radioaktív izotóp felezési ideje ${Th} nap. Kezdetben ${N0} mg van belőle. Hány mg marad ${t} nap múlva?</p>`,
+      ans: { vals: [val], tol: 0.01 }, fmt: 'szám (mg)',
+      hint: `${t} nap alatt hányszor feleződik a mennyiség?`,
+      sol: [T`\(${t}:${Th}=${k}\) felezés: \[${N0}\cdot\left(\frac{1}{2}\right)^{${k}}=${nt(val)}\ \text{mg}\]`] }; }
+  const f = P([0.2, 0.1, 0.3, 0.05]); const t = Th * Math.log(f) / Math.log(0.5);
+  return { q: `<p>Egy radioaktív izotóp felezési ideje ${Th} nap. Hány nap múlva marad belőle az eredeti mennyiség ${hu(f * 100)}%-a? (egy tizedesjegyre kerekítve)</p>`,
+    ans: { vals: [t], tol: 0.051 }, fmt: 'tizedes tört, pl. 34,6',
+    hint: T`\(\left(\frac12\right)^{t/${Th}}=${nt(f)}\). Vegyél logaritmust!`,
+    sol: [T`\[\frac{t}{${Th}}=\frac{\lg ${nt(f)}}{\lg 0{,}5}\quad\Rightarrow\quad t\approx ${nt(+t.toFixed(1))}\ \text{nap}\]`] };
+} };
+
+/* ===== Válasz értelmezése ===== */
+function parseAnswer(str) {
+  let s = String(str).trim().toLowerCase().replace(/[−–]/g, '-').replace(/\s+/g, ' ');
+  if (!s) return null;
+  s = s.replace(/^[a-z]\s*[=∈]\s*/, '');
+  const parts = s.split(/;|\bés\b|\bvagy\b|\|/).map(t => t.trim().replace(/^[a-z]_?\d?\s*=\s*/, '')).filter(Boolean);
+  const out = [];
+  for (const p0 of parts) {
+    if (/^nincs/.test(p0) || p0 === 'ø' || p0 === '∅') { out.push('none'); continue; }
+    let p = p0.replace(/\s/g, ''); let pm = false;
+    if (p.startsWith('±') || p.startsWith('+-')) { pm = true; p = p.replace(/^(±|\+-)/, ''); }
+    const num = t => { t = t.replace(',', '.'); if (!/^[+-]?(\d+\.?\d*|\.\d+)$/.test(t)) return NaN; return parseFloat(t); };
+    let v;
+    if (p.includes('/')) { const [a, b] = p.split('/'); v = num(a) / num(b); } else v = num(p);
+    if (!isFinite(v)) return { error: p0 };
+    out.push(v); if (pm) out.push(-v);
+  }
+  return out;
+}
+function checkAnswer(ans, parsed) {
+  if (!parsed || parsed.error) return { ok: false, bad: true };
+  if (ans.none) return { ok: parsed.length === 1 && parsed[0] === 'none' };
+  if (parsed.includes('none')) return { ok: false };
+  const want = ans.vals.slice().sort((a, b) => a - b), got = parsed.slice().sort((a, b) => a - b);
+  const close = (a, b) => ans.tolRel ? Math.abs(a - b) <= ans.tolRel * Math.abs(b) + 1 : Math.abs(a - b) <= (ans.tol || 1e-6);
+  const uniq = []; for (const g of got) if (!uniq.some(u => close(u, g))) uniq.push(g);
+  if (uniq.length !== want.length) return { ok: false, count: true, have: uniq.length, need: want.length };
+  return { ok: want.every((w, i) => close(uniq[i], w)) };
+}
+</script>
+
+<script>
+/* ===== TARTALOM ===== */
+const CH = [
+{ id: 'hatvany', num: 1, title: 'Hatványozás egész kitevőre', short: 'Hatványozás',
+  lead: 'A hatványazonosságok minden későbbi fejezet alapjai: a logaritmus azonosságai ezeknek a „kifordított” változatai.',
+  theory: T`<div class="prose"><p><b>Definíciók</b></p></div>
+<div class="mathbox">\[a^n=\underbrace{a\cdot a\cdots a}_{n\ \text{tényező}},\qquad a^1=a,\qquad a^0=1\ (a\ne 0),\qquad a^{-n}=\frac{1}{a^n}\ (a\ne 0)\]</div>
+<div class="prose"><p><b>Azonosságok</b> (a, b ≠ 0; n, m egész)</p></div>
+<div class="mathbox">\[a^n\cdot a^m=a^{n+m}\qquad \frac{a^n}{a^m}=a^{n-m}\qquad (a^n)^m=a^{n\cdot m}\]\[(a\cdot b)^n=a^n\cdot b^n\qquad \left(\frac{a}{b}\right)^n=\frac{a^n}{b^n}\qquad \left(\frac{a}{b}\right)^{-n}=\left(\frac{b}{a}\right)^n\]</div>
+<div class="prose"><p><b>Normálalak:</b> \(a\cdot 10^k\), ahol \(1\le a<10\) és \(k\) egész. Például \(0{,}00052=5{,}2\cdot 10^{-4}\), \(340\,000=3{,}4\cdot 10^{5}\).</p></div>`,
+  tf: [
+    { s: T`\((-2)^4=-2^4\)`, ok: false, why: T`\((-2)^4=16\), de \(-2^4=-16\): a kitevő csak arra vonatkozik, ami közvetlenül előtte áll.` },
+    { s: T`\(3^{-2}=-9\)`, ok: false, why: T`\(3^{-2}=\frac{1}{9}\). A negatív kitevő reciprokot jelent, nem negatív számot.` },
+    { s: T`\(2^3\cdot 2^4=2^7\)`, ok: true, why: 'Azonos alapú hatványok szorzásakor a kitevők összeadódnak, az alap marad.' },
+    { s: T`\(2^3+2^4=2^7\)`, ok: false, why: T`Összeget nem lehet így összevonni: \(2^3+2^4=8+16=24\), kiemeléssel \(2^3(1+2)\).` },
+    { s: T`\((a+b)^2=a^2+b^2\)`, ok: false, why: T`\((a+b)^2=a^2+2ab+b^2\). A hatványozás összegre nem bontható szét.` }
+  ],
+  ex: { task: T`Számítsd ki: \(\dfrac{2^{-3}\cdot 4^{2}}{8^{-1}}\)`, steps: [
+    T`Mindent 2 hatványaként írunk fel: \(4^2=(2^2)^2=2^4\) és \(8^{-1}=(2^3)^{-1}=2^{-3}\).`,
+    T`\[\frac{2^{-3}\cdot 2^{4}}{2^{-3}}\]`,
+    T`A kitevők: szorzásnál összeadunk, osztásnál kivonunk: \(-3+4-(-3)=4\).`,
+    T`\[=2^{4}=16\]`, 'Tanulság: a különböző alapokat hozd közös, lehetőleg prím alapra.'] },
+  gens: ['negkitevo', 'egyhatvany', 'kiemeles'] },
+
+{ id: 'gyok', num: 2, title: 'Az n-edik gyök', short: 'n-edik gyök',
+  lead: 'A gyökvonás a hatványozás visszafelé végzett művelete. Mindig az első kérdés: páros vagy páratlan a gyökkitevő?',
+  theory: T`<div class="prose"><ul>
+<li><b>n páros:</b> ha \(a\ge 0\), akkor \(\sqrt[n]{a}\) az a <i>nemnegatív</i> szám, amelynek n-edik hatványa \(a\). Negatív számból páros gyök nem vonható.</li>
+<li><b>n páratlan:</b> \(\sqrt[n]{a}\) az az egyetlen valós szám, amelynek n-edik hatványa \(a\). Itt \(a\) negatív is lehet: \(\sqrt[3]{-8}=-2\).</li></ul></div>
+<div class="mathbox">\[\sqrt{a^2}=|a|,\qquad \sqrt[n]{a}\cdot\sqrt[n]{b}=\sqrt[n]{ab},\qquad \frac{\sqrt[n]{a}}{\sqrt[n]{b}}=\sqrt[n]{\frac{a}{b}},\qquad \left(\sqrt[n]{a}\right)^k=\sqrt[n]{a^k},\qquad \sqrt[k]{\sqrt[n]{a}}=\sqrt[nk]{a}\]</div>
+<div class="prose"><ul>
+<li><b>Kivitel a gyökjel alól:</b> \(\sqrt{50}=\sqrt{25\cdot 2}=5\sqrt{2}\). Keresd a legnagyobb négyzet- (köb-) szám tényezőt!</li>
+<li><b>Bevitel a gyökjel alá:</b> \(3\sqrt{2}=\sqrt{9\cdot 2}=\sqrt{18}\).</li>
+<li><b>Összevonás:</b> csak az azonos gyökös tagok: \(2\sqrt3+5\sqrt3=7\sqrt3\).</li>
+<li><b>Gyöktelenítés:</b> \(\dfrac{1}{\sqrt a}=\dfrac{\sqrt a}{a}\), \(\dfrac{1}{\sqrt a-\sqrt b}=\dfrac{\sqrt a+\sqrt b}{a-b}\).</li></ul></div>`,
+  tf: [
+    { s: T`\(\sqrt{9+16}=3+4\)`, ok: false, why: T`\(\sqrt{9+16}=\sqrt{25}=5\). Összegből nem lehet tagonként gyököt vonni.` },
+    { s: T`\(\sqrt{4}=\pm 2\)`, ok: false, why: T`\(\sqrt4=2\), egyetlen szám. Az \(x^2=4\) egyenletnek van két megoldása, az más kérdés.` },
+    { s: T`\(\sqrt{(-5)^2}=5\)`, ok: true, why: T`\(\sqrt{x^2}=|x|\), így \(\sqrt{(-5)^2}=|-5|=5\).` },
+    { s: T`\(\sqrt[3]{-8}=-2\)`, ok: true, why: T`Páratlan gyökkitevőnél negatív szám is állhat a gyökjel alatt: \((-2)^3=-8\).` },
+    { s: T`\(\sqrt2+\sqrt3=\sqrt5\)`, ok: false, why: 'Különböző gyökös tagok nem vonhatók össze; √2 + √3 ≈ 3,15, míg √5 ≈ 2,24.' }
+  ],
+  ex: { task: T`Gyöktelenítsd a nevezőt: \(\dfrac{6}{\sqrt5-\sqrt2}\)`, steps: [
+    T`A nevező „párjával”, \((\sqrt5+\sqrt2)\)-vel bővítünk. Így a nevezőben \((a-b)(a+b)=a^2-b^2\) keletkezik.`,
+    T`\[\frac{6\,(\sqrt5+\sqrt2)}{(\sqrt5-\sqrt2)(\sqrt5+\sqrt2)}=\frac{6\,(\sqrt5+\sqrt2)}{5-2}\]`,
+    T`\[=2\,(\sqrt5+\sqrt2)\]`] },
+  gens: ['gyokertek', 'gyokkivitel', 'gyokazon'] },
+
+{ id: 'tort', num: 3, title: 'Törtkitevőjű hatvány', short: 'Törtkitevő',
+  lead: 'A törtkitevő a gyökvonás másik írásmódja: a nevező a gyökkitevő, a számláló a hatványkitevő.',
+  theory: T`<div class="mathbox">\[a^{\frac{m}{n}}=\sqrt[n]{a^{m}}=\left(\sqrt[n]{a}\right)^{m},\qquad a^{\frac{1}{n}}=\sqrt[n]{a},\qquad a^{-\frac{m}{n}}=\frac{1}{\sqrt[n]{a^m}}\qquad (a>0)\]</div>
+<div class="prose"><ul>
+<li>Az alap csak <b>pozitív</b> lehet: \((-8)^{1/3}\) nincs értelmezve (bár \(\sqrt[3]{-8}=-2\)).</li>
+<li>Az 1. fejezet minden azonossága érvényes törtkitevőre is.</li>
+<li>Tizedes kitevőt írj át törtre: \(0{,}5=\frac12\), \(0{,}75=\frac34\), \(1{,}5=\frac32\).</li>
+<li>Irracionális kitevő (pl. \(2^{\sqrt2}\)) is értelmezett pozitív alapra, egyre pontosabb racionális közelítésekkel. Így lesz \(a^x\) minden valós \(x\)-re értelmezve.</li></ul></div>`,
+  tf: [
+    { s: T`\(8^{\frac23}=4\)`, ok: true, why: T`\(\sqrt[3]{8}=2\), és \(2^2=4\).` },
+    { s: T`\(16^{-\frac12}=-4\)`, ok: false, why: T`\(16^{-1/2}=\frac{1}{\sqrt{16}}=\frac14\). Negatív kitevőtől nem lesz negatív a szám.` },
+    { s: T`\(8^{\frac23}=8\cdot\frac23\)`, ok: false, why: 'A kitevő nem szorzó! Először gyököt vonunk, azután hatványozunk.' },
+    { s: T`\(x^{\frac12}\cdot x^{\frac13}=x^{\frac56}\)`, ok: true, why: T`A kitevők összeadódnak: \(\frac12+\frac13=\frac56\).` }
+  ],
+  ex: { task: T`Számítsd ki: \(27^{-\frac23}\)`, steps: [
+    'Negatív kitevő → reciprok.', T`\[27^{-\frac23}=\frac{1}{27^{\frac23}}\]`,
+    'A nevező (3) a gyökkitevő, a számláló (2) a hatványkitevő.', T`\[=\frac{1}{\left(\sqrt[3]{27}\right)^{2}}=\frac{1}{3^{2}}=\frac{1}{9}\]`] },
+  gens: ['tortertek', 'kettohatvany', 'xhatvany'] },
+
+{ id: 'expfv', num: 4, title: 'Az exponenciális függvény', short: 'Exponenciális függvény', plot: 'exp',
+  lead: 'Az f(x) = aˣ (a > 0, a ≠ 1) függvény szigorúan monoton. Ebből következik az exponenciális egyenletek alaptétele.',
+  theory: T`<div class="mathbox">\[a^{x}=a^{y}\iff x=y\qquad (a>0,\ a\ne 1)\]</div>
+<div class="tbl"><table><thead><tr><th>Tulajdonság</th><th>a &gt; 1 (pl. 2ˣ)</th><th>0 &lt; a &lt; 1 (pl. (1/2)ˣ)</th></tr></thead><tbody>
+<tr><td>Értelmezési tartomány</td><td>minden valós szám</td><td>minden valós szám</td></tr>
+<tr><td>Értékkészlet</td><td>pozitív valós számok</td><td>pozitív valós számok</td></tr>
+<tr><td>Monotonitás</td><td>szigorúan növekvő</td><td>szigorúan csökkenő</td></tr>
+<tr><td>Zérushely, szélsőérték</td><td>nincs</td><td>nincs</td></tr>
+<tr><td>Nevezetes pont</td><td>(0; 1)</td><td>(0; 1)</td></tr>
+<tr><td>Aszimptota</td><td>y = 0 (balra)</td><td>y = 0 (jobbra)</td></tr></tbody></table></div>
+<div class="prose"><ul>
+<li>\(g(x)=a^{x-u}+v\): eltolás a \(\mathbf{v}(u;\,v)\) vektorral. Vigyázz: \(x-u\) esetén <b>jobbra</b>, \(x+u\) esetén <b>balra</b> tolunk!</li>
+<li>Az aszimptota is eltolódik: \(y=v\); az értékkészlet a \(v\)-nél nagyobb számok halmaza.</li>
+<li>\(a^x\) és \((1/a)^x\) grafikonja egymás tükörképe az \(y\) tengelyre.</li></ul></div>`,
+  tf: [
+    { s: T`A \(0{,}5^x\) függvény szigorúan csökkenő.`, ok: true, why: 'Az alap 0 és 1 közé esik, így a függvény csökken.' },
+    { s: T`Az \(a^x\) függvénynek van zérushelye.`, ok: false, why: 'aˣ minden x-re pozitív, ezért sosem nulla.' },
+    { s: T`A \(2^x+1\) értékkészlete a pozitív számok halmaza.`, ok: false, why: 'Az eltolás miatt az értékkészlet az 1-nél nagyobb számok halmaza.' },
+    { s: T`\(2^{x-3}\) grafikonja a \(2^x\) grafikonja 3-mal balra tolva.`, ok: false, why: T`\(x-3\) esetén <b>jobbra</b> tolunk 3-mal.` }
+  ],
+  ex: { task: T`Ábrázold és jellemezd: \(f(x)=2^{x-1}-4\)`, steps: [
+    T`Alapfüggvény: \(2^x\); eltolás a \(\mathbf v(1;\,-4)\) vektorral (1-gyel jobbra, 4-gyel le).`,
+    T`Aszimptota: \(y=-4\); értékkészlet: a \(-4\)-nél nagyobb valós számok.`,
+    T`Zérushely: \(2^{x-1}=4=2^2\Rightarrow x-1=2\Rightarrow x=3\).`,
+    T`\(y\) tengelymetszet: \(f(0)=2^{-1}-4=-3{,}5\).`,
+    'Szigorúan növekvő, szélsőértéke nincs. Próbáld ki lent a grafikonrajzolóval: alap 2, u = 1, v = −4.'] },
+  gens: ['expjell', 'expossz'] },
+
+{ id: 'expegy', num: 5, title: 'Exponenciális egyenletek', short: 'Exponenciális egyenletek',
+  lead: 'Minden típus célja ugyanaz: elérni az a^(…) = a^(…) alakot. Ha ez nem megy, logaritmus kell (9. fejezet, D típus).',
+  theory: T`<div class="tbl"><table><thead><tr><th>Típus</th><th>Felismerés</th><th>Teendő</th></tr></thead><tbody>
+<tr><td><b>A) Közös alap</b></td><td>az alapok ugyanannak a számnak a hatványai (2, 4, 8, √2 …)</td><td>mindkét oldalt ugyanannak az alapnak a hatványává alakítod, majd a kitevőket egyenlővé teszed</td></tr>
+<tr><td><b>B) Kiemelés</b></td><td>összeg, a kitevők csak konstansban térnek el: \(2^{x+1}+2^x\)</td><td>kiemeled a legkisebb hatványt → \(a^x=\text{szám}\)</td></tr>
+<tr><td><b>C) Új változó</b></td><td>\(a^{2x}\) és \(a^x\) is szerepel (pl. \(4^x\) és \(2^x\))</td><td>\(y=a^x\), másodfokú egyenlet; \(y>0\)!</td></tr>
+<tr><td><b>D) Azonos kitevő</b></td><td>\(a^x=b^x\)</td><td>osztás: \(\left(\frac ab\right)^x=1\Rightarrow x=0\)</td></tr></tbody></table></div>
+<div class="prose"><ul>
+<li>\(2^x+2^x=2\cdot 2^x=2^{x+1}\), és <b>nem</b> \(2^{2x}\).</li>
+<li>A \(3^x=-9\) egyenletnek nincs megoldása, mert \(3^x>0\).</li>
+<li>Új változónál ne felejts visszahelyettesíteni: \(y=4\) még nem a válasz!</li></ul></div>`,
+  tf: [
+    { s: T`\(2^x+2^x=2^{2x}\)`, ok: false, why: T`\(2^x+2^x=2\cdot 2^x=2^{x+1}\).` },
+    { s: T`A \(3^x=-9\) egyenlet megoldása \(x=-2\).`, ok: false, why: T`\(3^{-2}=\frac19\). A \(3^x\) mindig pozitív, így nincs megoldás.` },
+    { s: T`A \(4^x=8\) egyenlet megoldása \(x=\frac32\).`, ok: true, why: T`\(2^{2x}=2^3\Rightarrow 2x=3\).` },
+    { s: T`Ha \(y=2^x\), akkor \(4^x=y^2\).`, ok: true, why: T`\(4^x=(2^2)^x=(2^x)^2=y^2\).` }
+  ],
+  ex: { task: T`Oldd meg: \(4^x-6\cdot 2^x+8=0\)`, steps: [
+    T`Felismerés: \(4^x=(2^x)^2\), tehát C típus. Legyen \(y=2^x>0\).`,
+    T`\[y^2-6y+8=0\quad\Rightarrow\quad y_1=2,\ y_2=4\]`,
+    'Mindkét gyök pozitív, egyiket sem kell elvetni.',
+    T`\[2^x=2\Rightarrow x_1=1,\qquad 2^x=4\Rightarrow x_2=2\]`] },
+  gens: ['expA', 'expB', 'expC'] },
+
+{ id: 'log', num: 6, title: 'A logaritmus fogalma', short: 'A logaritmus',
+  lead: 'A logaritmus egy kitevő: logₐ b az a szám, amelyre az a alapot emelve b-t kapunk.',
+  theory: T`<div class="mathbox">\[\log_a b=c\iff a^{c}=b\qquad (a>0,\ a\ne 1,\ b>0)\qquad\text{ezért}\qquad a^{\log_a b}=b\]</div>
+<div class="prose"><p>Példák: \(\log_2 8=3\), mert \(2^3=8\); \(\log_3\frac19=-2\), mert \(3^{-2}=\frac19\); \(\log_5 1=0\), mert \(5^0=1\).</p>
+<ul><li><b>Feltételek:</b> az alap pozitív és nem 1; a logaritmus mögötti szám pozitív. Negatív számnak és 0-nak nincs logaritmusa.</li>
+<li><b>Jelölések:</b> \(\lg b=\log_{10} b\) (számológépen „log”), \(\ln b=\log_e b\), ahol \(e\approx 2{,}718\).</li></ul></div>
+<div class="mathbox">\[\log_a 1=0,\qquad \log_a a=1,\qquad \log_a a^{k}=k,\qquad a^{\log_a b}=b\]</div>`,
+  tf: [
+    { s: T`\(\log_2 8=4\)`, ok: false, why: T`\(\log_2 8=3\), mert \(2^3=8\). A logaritmus nem osztás!` },
+    { s: T`\(\lg 0{,}01=-2\)`, ok: true, why: T`\(10^{-2}=0{,}01\). A logaritmus lehet negatív, csak a mögötte álló szám nem.` },
+    { s: T`\(\log_3 0=1\)`, ok: false, why: T`\(\log_3 0\) nincs értelmezve, mert 3 egyik hatványa sem 0.` },
+    { s: T`\(\log_a 1=0\) minden megengedett \(a\)-ra.`, ok: true, why: T`\(a^0=1\).` }
+  ],
+  ex: { task: T`Számítsd ki: \(\log_4 8\)`, steps: [
+    T`Jelöljük \(c\)-vel, és írjuk fel hatványként: \(\log_4 8=c\iff 4^c=8\).`,
+    T`Közös alapra hozunk (5. fejezet!): \[2^{2c}=2^{3}\]`,
+    T`\[2c=3\quad\Rightarrow\quad c=\frac32\]`] },
+  gens: ['logertek', 'logdef', 'logalap'] },
+
+{ id: 'azon', num: 7, title: 'A logaritmus azonosságai', short: 'Log. azonosságok',
+  lead: 'A logaritmus azonosságai a hatványazonosságok „fordításai”: a szorzásból összeadás, a hatványozásból szorzás lesz.',
+  theory: T`<div class="mathbox">\[\log_a(xy)=\log_a x+\log_a y\qquad \log_a\frac{x}{y}=\log_a x-\log_a y\qquad \log_a x^{k}=k\log_a x\]\[\log_a b=\frac{\log_c b}{\log_c a}=\frac{\lg b}{\lg a}\qquad \log_a b=\frac{1}{\log_b a}\]</div>
+<div class="tbl"><table><thead><tr><th>Hatványazonosság</th><th>Logaritmus-azonosság</th></tr></thead><tbody>
+<tr><td>\(a^m\cdot a^n=a^{m+n}\)</td><td>\(\log(xy)=\log x+\log y\)</td></tr>
+<tr><td>\(a^m:a^n=a^{m-n}\)</td><td>\(\log\frac{x}{y}=\log x-\log y\)</td></tr>
+<tr><td>\((a^m)^k=a^{mk}\)</td><td>\(\log x^k=k\log x\)</td></tr></tbody></table></div>
+<div class="prose"><p>Az azonosságok csak <b>azonos alapú</b> logaritmusokra működnek; különböző alapnál előbb át kell térni.</p></div>`,
+  tf: [
+    { s: T`\(\lg(x+y)=\lg x+\lg y\)`, ok: false, why: 'Összeg logaritmusára nincs azonosság. A szorzat logaritmusa bontható összegre.' },
+    { s: T`\(\dfrac{\lg 8}{\lg 2}=\lg 4\)`, ok: false, why: T`Ez áttérés: \(\dfrac{\lg 8}{\lg 2}=\log_2 8=3\).` },
+    { s: T`\(2\lg x=\lg\left(x^2\right)\) \((x>0)\)`, ok: true, why: T`\(k\log x=\log x^k\).` },
+    { s: T`\((\lg x)^2=2\lg x\)`, ok: false, why: T`A \(2\lg x\) a \(\lg(x^2)\)-tel egyenlő, nem \((\lg x)^2\)-tel.` },
+    { s: T`\(\lg 25+\lg 4=2\)`, ok: true, why: T`\(\lg(25\cdot 4)=\lg 100=2\).` }
+  ],
+  ex: { task: T`Számítsd ki: \(2\lg 5+\lg 4\), majd \(\log_3 20\) értékét számológéppel.`, steps: [
+    T`A szorzót felvisszük kitevőbe: \(2\lg 5=\lg 5^2=\lg 25\).`,
+    T`\[\lg 25+\lg 4=\lg(25\cdot 4)=\lg 100=2\]`,
+    T`A \(\log_3 20\)-hoz áttérünk 10-es alapra:`,
+    T`\[\log_3 20=\frac{\lg 20}{\lg 3}\approx\frac{1{,}3010}{0{,}4771}\approx 2{,}73\]`] },
+  gens: ['logossz', 'attere', 'lg23', 'calc'] },
+
+{ id: 'logfv', num: 8, title: 'A logaritmusfüggvény', short: 'Logaritmusfüggvény', plot: 'log',
+  lead: 'A logₐ x függvény az aˣ inverze: grafikonjaik egymás tükörképei az y = x egyenesre.',
+  theory: T`<div class="tbl"><table><thead><tr><th>Tulajdonság</th><th>a &gt; 1 (pl. log₂ x)</th><th>0 &lt; a &lt; 1 (pl. log₁/₂ x)</th></tr></thead><tbody>
+<tr><td>Értelmezési tartomány</td><td>pozitív valós számok</td><td>pozitív valós számok</td></tr>
+<tr><td>Értékkészlet</td><td>minden valós szám</td><td>minden valós szám</td></tr>
+<tr><td>Monotonitás</td><td>szigorúan növekvő</td><td>szigorúan csökkenő</td></tr>
+<tr><td>Zérushely</td><td>x = 1</td><td>x = 1</td></tr>
+<tr><td>Nevezetes pontok</td><td>(1; 0) és (a; 1)</td><td>(1; 0) és (a; 1)</td></tr>
+<tr><td>Aszimptota</td><td>x = 0 (y tengely)</td><td>x = 0 (y tengely)</td></tr></tbody></table></div>
+<div class="prose"><ul>
+<li>A szigorú monotonitás miatt: \(\log_a x=\log_a y\iff x=y\) \((x,y>0)\).</li>
+<li>Eltoláskor az <b>értelmezési tartomány is változik</b>: \(\log_2(x-3)\) csak \(x>3\) esetén értelmezett, aszimptotája \(x=3\).</li>
+<li>\(\log_{1/2}x=-\log_2 x\): a két grafikon egymás tükörképe az \(x\) tengelyre.</li></ul></div>`,
+  tf: [
+    { s: T`\(\log_2 x\) értelmezési tartománya a pozitív számok halmaza.`, ok: true, why: 'Csak pozitív számnak van logaritmusa.' },
+    { s: T`\(\log_{1/2}x\) szigorúan növekvő.`, ok: false, why: 'Az alap 0 és 1 közé esik, ezért szigorúan csökkenő.' },
+    { s: T`\(\log_2(x-3)\) aszimptotája az \(x=3\) egyenes.`, ok: true, why: T`\(x-3>0\Rightarrow x>3\); a grafikon a \(x=3\) egyeneshez simul.` },
+    { s: T`Minden \(\log_a x\) grafikonja átmegy az \((1;0)\) ponton.`, ok: true, why: T`\(\log_a 1=0\) minden megengedett alapra.` }
+  ],
+  ex: { task: T`Ábrázold és jellemezd: \(f(x)=\log_2(x+4)-1\)`, steps: [
+    T`Alapfüggvény: \(\log_2 x\); eltolás a \(\mathbf v(-4;\,-1)\) vektorral (4-gyel balra, 1-gyel le).`,
+    T`Értelmezési tartomány: \(x+4>0\Rightarrow x>-4\). Aszimptota: \(x=-4\).`,
+    T`Zérushely: \(\log_2(x+4)=1\Rightarrow x+4=2\Rightarrow x=-2\).`,
+    T`\(y\) tengelymetszet: \(f(0)=\log_2 4-1=1\).`,
+    'Szigorúan növekvő, értékkészlete minden valós szám. Próbáld ki lent: alap 2, u = −4, v = −1.'] },
+  gens: ['logjell', 'logcmp'] },
+
+{ id: 'logegy', num: 9, title: 'Logaritmikus egyenletek', short: 'Logaritmikus egyenletek',
+  lead: 'A leggyakoribb pontvesztés az értelmezési tartomány elfelejtése. Minden megoldás négy lépés: feltétel → átalakítás → logaritmus elhagyása → ellenőrzés.',
+  theory: T`<div class="tbl"><table><thead><tr><th>Típus</th><th>Felismerés</th><th>Teendő</th></tr></thead><tbody>
+<tr><td><b>A) Definíció</b></td><td>egyetlen logaritmus = szám</td><td>\(\log_a A=c\Rightarrow A=a^c\)</td></tr>
+<tr><td><b>B) Azonosságok</b></td><td>több logaritmus összege, különbsége</td><td>összevonás egy logaritmusba, aztán A vagy monotonitás</td></tr>
+<tr><td><b>C) Új változó</b></td><td>\((\log x)^2\) is szerepel</td><td>\(y=\log x\); itt \(y\) negatív is lehet!</td></tr>
+<tr><td><b>D) Logaritmussal</b></td><td>\(a^x=b\), b nem hatványa a-nak</td><td>\(x=\log_a b=\frac{\lg b}{\lg a}\)</td></tr></tbody></table></div>
+<div class="prose"><ul>
+<li>Hibás: \(\lg(x+3)=\lg x+\lg 3\).</li>
+<li>Hibás: \(\lg x+\lg(x-3)=1\)-ből \(x+x-3=10\). Helyesen: \(x(x-3)=10\).</li>
+<li>C típusnál a negatív \(y\) is jó: \(\log_2 x=-1\Rightarrow x=\frac12\).</li></ul></div>`,
+  tf: [
+    { s: T`\(\lg x+\lg(x-3)=1\)-ből \(x+x-3=10\).`, ok: false, why: T`A szorzat logaritmusa az összeg: \(x(x-3)=10\).` },
+    { s: T`A \(\log_2 x=-1\) egyenletnek nincs megoldása.`, ok: false, why: T`\(x=2^{-1}=\frac12\). A logaritmus értéke lehet negatív.` },
+    { s: 'A kapott gyököket ellenőrizni kell az értelmezési tartományra.', ok: true, why: 'Az összevonás bővítheti az értelmezési tartományt, így hamis gyök is keletkezhet.' }
+  ],
+  ex: { task: T`Oldd meg: \(\lg x+\lg(x-3)=1\)`, steps: [
+    T`Feltétel: \(x>0\) és \(x-3>0\), tehát \(x>3\).`,
+    T`\[\lg\bigl(x(x-3)\bigr)=1\quad\Rightarrow\quad x^2-3x=10\]`,
+    T`\[x^2-3x-10=0\quad\Rightarrow\quad x_1=5,\ x_2=-2\]`,
+    T`Az \(x=-2\) nem felel meg a feltételnek, így az egyetlen megoldás \(x=5\).`] },
+  gens: ['logA', 'logB', 'logC', 'logD'] },
+
+{ id: 'alk', num: 10, title: 'Gyakorlati alkalmazások', short: 'Alkalmazások',
+  lead: 'A szöveges feladatok szinte mind ugyanarra a képletre épülnek: egy mennyiség egyenlő időközönként ugyanannyiszorosára változik.',
+  theory: T`<div class="mathbox">\[N(t)=N_0\cdot q^{t},\qquad q=1+\frac{p}{100}\ \text{(növekedés)},\qquad q=1-\frac{p}{100}\ \text{(csökkenés)}\]\[T_n=T_0\left(1+\frac{p}{100}\right)^{n}\ \text{(kamatos kamat)},\qquad N(t)=N_0\left(\frac12\right)^{t/T}\ \text{(felezési idő)}\]\[\text{pH}=-\lg[\text{H}^+],\qquad L=10\cdot\lg\frac{I}{I_0}\ \text{dB}\]</div>
+<div class="prose"><ul><li>Ha a végérték a kérdés: helyettesíts be.</li>
+<li>Ha az idő a kérdés: oszd el \(N_0\)-lal, majd vegyél logaritmust (9. fejezet D típus).</li>
+<li>„Mikor haladja meg?” típusú kérdésnél felfelé kerekítünk. Ha \(q<1\), a \(\lg q\) negatív: osztáskor megfordul a reláció!</li></ul></div>`,
+  tf: [
+    { s: 'Évi 5%-os kamatos kamatnál 3 év alatt a tőke 15%-kal nő.', ok: false, why: T`\(1{,}05^3\approx 1{,}1576\), tehát kb. 15,76%-kal: a kamat is kamatozik.` },
+    { s: '8 napos felezési idő mellett 24 nap múlva az eredeti mennyiség 1/8-a marad.', ok: true, why: T`24 nap = 3 felezés: \(\left(\frac12\right)^3=\frac18\).` },
+    { s: 'Ha valami évente 10%-kal csökken, 2 év múlva az eredeti 80%-a marad.', ok: false, why: T`\(0{,}9^2=0{,}81\), tehát 81%.` }
+  ],
+  ex: { task: '500 000 Ft-ot beteszünk évi 4%-os kamatos kamatra. Mennyi lesz 5 év múlva, és mikor haladja meg az 1 millió Ft-ot?', steps: [
+    T`\[T_5=500\,000\cdot 1{,}04^{5}\approx 608\,326\ \text{Ft}\]`,
+    T`\[500\,000\cdot 1{,}04^{n}=1\,000\,000\quad\Rightarrow\quad 1{,}04^{n}=2\]`,
+    T`\[n=\frac{\lg 2}{\lg 1{,}04}\approx 17{,}67\]`,
+    'Felfelé kerekítünk: a 18. év végén haladja meg először az 1 millió forintot.'] },
+  gens: ['kamat', 'csokk', 'felez'] }
+];
+const PROBA_SET = ['negkitevo', 'egyhatvany', 'tortertek', 'kettohatvany', 'expjell', 'expA', 'expB', 'expC', 'logertek', 'logossz', 'logA', 'logB'];
+</script>
+
+<script>
+/* ===== ALKALMAZÁS ===== */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const GOAL = 10;
+const KEY = 'hgl11-progress-v1';
+let prog = {};
+try { prog = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { prog = {}; }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(prog)); } catch (e) {} };
+const pget = id => (prog[id] = prog[id] || { ok: 0, tried: 0 });
+
+function typeset(el) {
+  if (window.MathJax && MathJax.typesetPromise) { try { MathJax.typesetClear && MathJax.typesetClear([el]); } catch (e) {} MathJax.typesetPromise([el]).catch(() => {}); }
+}
+
+function renderToc(active) {
+  const toc = $('#toc');
+  let h = `<a href="#start" ${active === 'start' ? 'aria-current="page"' : ''}><span class="n">◦</span><span>Kezdőlap</span><span></span></a>`;
+  for (const c of CH) { const p = pget(c.id); const done = p.ok >= GOAL;
+    h += `<a href="#${c.id}" ${active === c.id ? 'aria-current="page"' : ''}><span class="n">${String(c.num).padStart(2, '0')}</span><span>${c.short}</span><span class="p ${done ? 'done' : ''}">${Math.min(p.ok, GOAL)}/${GOAL}</span></a>`; }
+  h += `<div class="sep"></div><a href="#proba" ${active === 'proba' ? 'aria-current="page"' : ''}><span class="n">✎</span><span>Próba-témazáró</span><span></span></a>`;
+  toc.innerHTML = h;
+  const tot = CH.reduce((s, c) => s + Math.min(pget(c.id).ok, GOAL), 0), max = CH.length * GOAL;
+  $('#ovl').textContent = `Haladás: ${tot} / ${max} helyes megoldás`;
+  $('#ovb').style.width = (100 * tot / max) + '%';
+  const cur = toc.querySelector('[aria-current="page"]'); if (cur && window.innerWidth < 880) cur.scrollIntoView({ inline: 'center', block: 'nearest' });
+}
+
+function renderHome() {
+  const m = $('#main');
+  m.innerHTML = `<div class="eyebrow">11. évfolyam · középszint</div>
+  <h2 class="ch">Ismételjük át a hatvány–gyök–logaritmus témakört</h2>
+  <p class="lead">Tíz fejezet, mindegyikben rövid elmélet, „igaz vagy hamis?” kérdések a leggyakoribb hibákról, lépésenként kibontható mintapélda és végtelen sok gyakorlófeladat azonnali ellenőrzéssel.</p>
+  <section class="blk"><h3>Hogyan használd? <span class="tag">3 lépés</span></h3>
+   <div class="how"><div><b>Olvasd el, kattints</b><span>Az elmélet után döntsd el az igaz-hamis állításokról, hogy jók-e. A rossz válaszból tanulsz a legtöbbet.</span></div>
+   <div><b>Gyakorolj típusonként</b><span>Fejezetenként 10 helyes válasz a cél. Elakadsz? Kérj tippet, vagy nézd meg a megoldást.</span></div>
+   <div><b>Írd meg a próbát</b><span>A próba-témazáró 12 véletlen feladat az egész témakörből, a végén pontszámmal.</span></div></div></section>
+  <section class="blk"><h3>Fejezetek</h3><div class="cards">${CH.map(c => { const p = pget(c.id);
+    return `<a class="ccard" href="#${c.id}"><span class="n">${String(c.num).padStart(2, '0')} · ${Math.min(p.ok, GOAL)}/${GOAL} helyes</span><strong>${c.title}</strong><span class="d">${c.gens.length} feladattípus${c.plot ? ' · grafikonrajzoló' : ''}</span></a>`; }).join('')}
+   <a class="ccard test" href="#proba"><span class="n">12 feladat</span><strong>Próba-témazáró</strong><span class="d">Véletlen feladatsor pontozással</span></a></div></section>
+  <div class="foot"><span>A haladás csak ebben a böngészőben tárolódik.</span><span class="confirm" id="rst"><button class="btn sm ghost" id="rst1">Haladás törlése</button></span></div>`;
+  $('#rst1').onclick = () => {
+    $('#rst').innerHTML = `<span>Biztosan törlöd?</span><button class="btn sm" id="rsty">Igen, törlöm</button><button class="btn sm ghost" id="rstn">Mégse</button>`;
+    $('#rsty').onclick = () => { prog = {}; save(); route(); };
+    $('#rstn').onclick = () => route();
+  };
+}
+
+function renderChapter(c) {
+  const m = $('#main');
+  const idx = CH.indexOf(c); const next = CH[idx + 1];
+  m.innerHTML = `<div class="eyebrow">${String(c.num).padStart(2, '0')}. fejezet</div>
+   <h2 class="ch">${c.title}</h2><p class="lead">${c.lead}</p>
+   <section class="blk"><h3>Elmélet</h3>${c.theory}</section>
+   <section class="blk"><h3>Igaz vagy hamis? <span class="tag">tipikus hibák</span></h3><div class="tf" id="tf"></div></section>
+   <section class="blk"><h3>Mintapélda</h3><div class="task prose">${c.ex.task}</div><ol class="steps" id="steps"></ol>
+     <div class="ansrow"><button class="btn" id="stepn">Következő lépés</button><button class="btn ghost" id="stepall">Mind látszódjon</button></div></section>
+   ${c.plot ? `<section class="blk"><h3>Grafikonrajzoló <span class="tag">kísérletezz</span></h3><div id="plot"></div></section>` : ''}
+   <section class="blk"><h3>Gyakorlás <span class="tag" id="cnt"></span></h3><div class="practice" id="pr"></div></section>
+   <div class="foot">${next ? `<a class="btn" href="#${next.id}">Tovább: ${next.short} →</a>` : `<a class="btn primary" href="#proba">Próba-témazáró →</a>`}</div>`;
+  // igaz-hamis
+  $('#tf').innerHTML = c.tf.map((t, i) => `<div class="tfc" id="tf${i}"><div class="st">${t.s}</div><div class="btns"><button class="btn sm" data-i="${i}" data-v="1">Igaz</button><button class="btn sm" data-i="${i}" data-v="0">Hamis</button></div><div class="why" hidden></div></div>`).join('');
+  $('#tf').onclick = e => { const b = e.target.closest('button[data-i]'); if (!b) return; const t = c.tf[+b.dataset.i]; const card = $('#tf' + b.dataset.i);
+    const right = (b.dataset.v === '1') === t.ok; card.className = 'tfc ' + (right ? 'ok' : 'no');
+    const w = card.querySelector('.why'); w.hidden = false; w.innerHTML = `<b>${right ? 'Eltaláltad' : 'Nem talált'} — az állítás ${t.ok ? 'igaz' : 'hamis'}.</b>${t.why}`; typeset(w); };
+  // lépések
+  let shown = 0; const st = $('#steps');
+  const showStep = () => { if (shown >= c.ex.steps.length) return; const li = document.createElement('li'); li.innerHTML = `<div>${c.ex.steps[shown++]}</div>`; st.appendChild(li); typeset(li);
+    if (shown >= c.ex.steps.length) { $('#stepn').disabled = true; $('#stepall').disabled = true; } };
+  showStep();
+  $('#stepn').onclick = showStep; $('#stepall').onclick = () => { while (shown < c.ex.steps.length) showStep(); };
+  if (c.plot) makePlotter($('#plot'), c.plot);
+  makePractice($('#pr'), c);
+  typeset(m);
+}
+
+function fbText(res, p) {
+  if (res.bad) return 'Ezt nem tudom számként értelmezni. Törtet így írj: 3/2, tizedest így: 1,5, több megoldást pontosvesszővel: 1; 2.';
+  if (res.count) return res.need > res.have ? `Nem jó, vagy hiányzik megoldás: ennek a feladatnak ${res.need} megoldása van.` : `Túl sok megoldást adtál meg: ennek a feladatnak ${res.need} megoldása van.`;
+  return 'Nem jó. Próbáld újra, vagy kérj tippet!';
+}
+
+function makePractice(box, c) {
+  let gid = 'mix', cur = null, tries = 0, solved = false;
+  const p = pget(c.id);
+  const updCnt = () => { $('#cnt').textContent = `${Math.min(p.ok, GOAL)} / ${GOAL} helyes`; };
+  box.innerHTML = `<div class="chips" role="group" aria-label="Feladattípus"><button class="chip" data-g="mix" aria-pressed="true">Vegyes</button>${c.gens.map(g => `<button class="chip" data-g="${g}" aria-pressed="false">${G[g].name}</button>`).join('')}</div>
+   <div class="prob" id="q" aria-live="polite"></div>
+   <div id="inp"></div>
+   <div class="fb" id="fb" hidden></div>
+   <div class="ansrow"><button class="btn ghost" id="hint">Tipp</button><button class="btn ghost" id="solb">Megoldás</button><button class="btn" id="newp">Új feladat</button><span class="score" id="sc"></span></div>
+   <div class="solbox" id="sol" hidden></div>`;
+  const chips = box.querySelector('.chips');
+  chips.onclick = e => { const b = e.target.closest('.chip'); if (!b) return; gid = b.dataset.g; chips.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x === b)); newProblem(); };
+  const fb = (cls, html) => { const f = $('#fb', box); f.hidden = false; f.className = 'fb ' + cls; f.innerHTML = html; typeset(f); };
+  function markResult(ok) {
+    if (solved) return; p.tried++;
+    if (ok) { solved = true; p.ok++; save(); renderToc(c.id); updCnt(); fb('ok', tries === 0 ? 'Helyes! Szép munka.' : 'Helyes!'); }
+    else { tries++; save(); }
+  }
+  function newProblem() {
+    const id = gid === 'mix' ? P(c.gens) : gid; cur = G[id].make(); tries = 0; solved = false;
+    $('#q', box).innerHTML = `<div class="eyebrow" style="margin-bottom:4px">${G[id].name}</div>${cur.q}`;
+    $('#fb', box).hidden = true; $('#sol', box).hidden = true;
+    const inp = $('#inp', box);
+    if (cur.ans.choice) {
+      inp.innerHTML = `<div class="choices">${cur.ans.choice.map((o, i) => `<button class="btn" data-c="${i}">${esc(o)}</button>`).join('')}</div>`;
+      inp.querySelector('.choices').onclick = e => { const b = e.target.closest('[data-c]'); if (!b || solved) return;
+        const ok = +b.dataset.c === cur.ans.correct; markResult(ok); if (!ok) fb('no', 'Nem jó. Gondold végig a monotonitást, vagy kérj tippet!'); };
+    } else {
+      inp.innerHTML = `<div class="ansrow"><input id="ans-${c.id}" type="text" autocomplete="off" spellcheck="false" aria-label="Válasz" placeholder="Válasz"><button class="btn primary" id="chk">Ellenőrzés</button></div>
+       <div class="fmt">Formátum: ${esc(cur.fmt)} · tört: <code>3/2</code> · tizedes: <code>1,5</code> · több megoldás: <code>1; 2</code> · ha nincs: <code>nincs</code></div>`;
+      const field = $('input', inp);
+      const go = () => { if (solved) return; const res = checkAnswer(cur.ans, parseAnswer(field.value)); if (res.ok) markResult(true); else { if (!res.bad) markResult(false); fb('no', fbText(res) + (tries >= 2 ? ' A megoldást is megnézheted.' : '')); } };
+      $('#chk', inp).onclick = go; field.onkeydown = e => { if (e.key === 'Enter') go(); };
+      if (window.matchMedia('(pointer:fine)').matches) field.focus({ preventScroll: true });
+    }
+    $('#sc', box).textContent = `Ebben a fejezetben: ${p.ok} helyes / ${p.tried} próbálkozás`;
+    typeset(box);
+  }
+  $('#hint', box).onclick = () => { if (cur) fb('info', '<b>Tipp:</b> ' + cur.hint); };
+  $('#solb', box).onclick = () => { if (!cur) return; const s = $('#sol', box); s.hidden = false;
+    let ansT = ''; if (cur.ans.choice) ansT = cur.ans.choice[cur.ans.correct];
+    s.innerHTML = '<p><b>Megoldás</b></p>' + cur.sol.map(x => /^\s*\\\[/.test(x) ? `<div class="mathbox">${x}</div>` : `<p>${x}</p>`).join('') + (ansT ? `<p>Helyes válasz: <b>${esc(ansT)}</b></p>` : '');
+    if (!solved) { solved = true; p.tried++; save(); $('#sc', box).textContent = `Ebben a fejezetben: ${p.ok} helyes / ${p.tried} próbálkozás`; }
+    typeset(s); };
+  $('#newp', box).onclick = newProblem;
+  updCnt(); newProblem();
+}
+
+/* ===== Grafikonrajzoló ===== */
+function makePlotter(box, mode) {
+  const BASES = [{ l: '1/3', v: 1 / 3 }, { l: '1/2', v: .5 }, { l: '2', v: 2 }, { l: '3', v: 3 }, { l: '10', v: 10 }];
+  let a = 2, u = 0, v = 0, inv = false;
+  const isExp = mode === 'exp';
+  box.innerHTML = `<div class="plot"><div class="canvasbox"><canvas aria-label="A függvény grafikonja"></canvas></div>
+   <div class="ctrl"><div class="ftex" id="pf"></div>
+    <div><span>Alap (a)</span><div class="row" id="pb">${BASES.map(b => `<button class="chip" data-v="${b.v}" aria-pressed="${b.v === 2}">${b.l}</button>`).join('')}</div></div>
+    <label for="pu-${mode}">Vízszintes eltolás: u = <b id="puv">0</b><input type="range" id="pu-${mode}" min="-5" max="5" step="1" value="0"></label>
+    <label for="pv-${mode}">Függőleges eltolás: v = <b id="pvv">0</b><input type="range" id="pv-${mode}" min="-5" max="5" step="1" value="0"></label>
+    <label class="chk" for="pi-${mode}"><input type="checkbox" id="pi-${mode}"> Tükörkép az y = x egyenesre (inverz)</label>
+    <dl class="props" id="pp"></dl></div></div>`;
+  const cv = $('canvas', box), cb = $('.canvasbox', box);
+  const S = 6;
+  const f = x => isExp ? Math.pow(a, x - u) + v : (x - u > 0 ? Math.log(x - u) / Math.log(a) + v : NaN);
+  const g0 = x => isExp ? Math.pow(a, x) : (x > 0 ? Math.log(x) / Math.log(a) : NaN);
+  const fmtN = x => hu(+x.toFixed(3));
+  const bl = BASES.find(b => b.v === a) ? BASES.find(b => b.v === a).l : String(a);
+  function formula() {
+    const blab = (BASES.find(b => b.v === a) || { l: a }).l; const bb = blab.includes('/') ? `(${blab})` : blab;
+    const xpart = u === 0 ? 'x' : (u > 0 ? `x − ${u}` : `x + ${-u}`);
+    const vpart = v === 0 ? '' : (v > 0 ? ` + ${v}` : ` − ${-v}`);
+    return isExp ? `f(x) = ${bb}<sup>${xpart}</sup>${vpart}` : `f(x) = log<sub>${blab}</sub>(${xpart})${vpart}`;
+  }
+  function props() {
+    const inc = a > 1; let rows;
+    if (isExp) { const zero = v < 0 ? 'x = ' + fmtN(u + Math.log(-v) / Math.log(a)) : 'nincs';
+      rows = [['Ért. tartomány', 'minden valós szám'], ['Értékkészlet', `y > ${hu(v)}`], ['Monotonitás', inc ? 'szig. növekvő' : 'szig. csökkenő'], ['Aszimptota', `y = ${hu(v)}`], ['Zérushely', zero], ['y-metszet', 'y = ' + fmtN(Math.pow(a, -u) + v)]]; }
+    else { const yint = u < 0 ? 'y = ' + fmtN(Math.log(-u) / Math.log(a) + v) : 'nincs (x = 0 nincs az ÉT-ben)';
+      rows = [['Ért. tartomány', `x > ${hu(u)}`], ['Értékkészlet', 'minden valós szám'], ['Monotonitás', inc ? 'szig. növekvő' : 'szig. csökkenő'], ['Aszimptota', `x = ${hu(u)}`], ['Zérushely', 'x = ' + fmtN(u + Math.pow(a, -v))], ['y-metszet', yint]]; }
+    $('#pp', box).innerHTML = rows.map(r => `<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('');
+    $('#pf', box).innerHTML = formula();
+  }
+  function draw() {
+    const W = cb.clientWidth || 400, dpr = window.devicePixelRatio || 1;
+    cv.width = W * dpr; cv.height = W * dpr; const c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const cs = getComputedStyle(document.documentElement); const col = n => cs.getPropertyValue(n).trim();
+    const k = W / (2 * S); const X = x => (x + S) * k, Y = y => (S - y) * k;
+    c.fillStyle = col('--card'); c.fillRect(0, 0, W, W);
+    c.strokeStyle = col('--gridline'); c.lineWidth = 1;
+    for (let i = -S; i <= S; i++) { c.beginPath(); c.moveTo(X(i), 0); c.lineTo(X(i), W); c.stroke(); c.beginPath(); c.moveTo(0, Y(i)); c.lineTo(W, Y(i)); c.stroke(); }
+    c.strokeStyle = col('--muted'); c.lineWidth = 1.2; c.beginPath(); c.moveTo(0, Y(0)); c.lineTo(W, Y(0)); c.moveTo(X(0), 0); c.lineTo(X(0), W); c.stroke();
+    c.fillStyle = col('--muted'); c.font = `11px ${col('--f-mono') || 'monospace'}`; c.textAlign = 'center';
+    for (let i = -S + 1; i < S; i++) { if (i === 0 || i % 2) continue; c.fillText(String(i).replace('-', '−'), X(i), Y(0) + 14); c.textAlign = 'right'; c.fillText(String(i).replace('-', '−'), X(0) - 5, Y(i) + 4); c.textAlign = 'center'; }
+    const curve = (fn, color, width, dash, swap) => {
+      c.strokeStyle = color; c.lineWidth = width; c.setLineDash(dash || []); c.beginPath(); let on = false;
+      const N = 900; for (let i = 0; i <= N; i++) { const t = -S - 1 + (2 * S + 2) * i / N; const y = fn(t);
+        if (!isFinite(y) || Math.abs(y) > 40) { on = false; continue; }
+        const px = swap ? X(y) : X(t), py = swap ? Y(t) : Y(y);
+        if (!on) { c.moveTo(px, py); on = true; } else c.lineTo(px, py); }
+      c.stroke(); c.setLineDash([]); };
+    // aszimptota
+    c.strokeStyle = col('--red'); c.lineWidth = 1.2; c.setLineDash([6, 5]); c.beginPath();
+    if (isExp) { c.moveTo(0, Y(v)); c.lineTo(W, Y(v)); } else { c.moveTo(X(u), 0); c.lineTo(X(u), W); } c.stroke(); c.setLineDash([]);
+    if (u !== 0 || v !== 0) curve(g0, col('--muted'), 1.5, [3, 4], false);
+    if (inv) { c.strokeStyle = col('--muted'); c.setLineDash([2, 4]); c.beginPath(); c.moveTo(X(-S), Y(-S)); c.lineTo(X(S), Y(S)); c.stroke(); c.setLineDash([]); curve(f, col('--green'), 2, [8, 5], true); }
+    curve(f, col('--pen'), 2.6, null, false);
+    // nevezetes pontok
+    const dot = (x, y) => { if (!isFinite(x) || !isFinite(y) || Math.abs(x) > S || Math.abs(y) > S) return; c.fillStyle = col('--pen'); c.beginPath(); c.arc(X(x), Y(y), 4, 0, 7); c.fill(); };
+    if (isExp) { dot(0, Math.pow(a, -u) + v); if (v < 0) dot(u + Math.log(-v) / Math.log(a), 0); }
+    else { dot(u + Math.pow(a, -v), 0); if (u < 0) dot(0, Math.log(-u) / Math.log(a) + v); }
+    // jelmagyarázat
+    c.textAlign = 'left'; c.font = `12px ${col('--f-body') || 'sans-serif'}`;
+    const leg = [[col('--pen'), 'f(x)'], [col('--red'), 'aszimptota']]; if (u || v) leg.push([col('--muted'), 'alapfüggvény']); if (inv) leg.push([col('--green'), 'inverz']);
+    leg.forEach((l, i) => { c.fillStyle = col('--card'); c.fillRect(8, 8 + i * 18, 110, 18); c.fillStyle = l[0]; c.fillRect(12, 15 + i * 18, 14, 3); c.fillStyle = col('--ink'); c.fillText(l[1], 32, 20 + i * 18); });
+  }
+  const upd = () => { props(); draw(); };
+  $('#pb', box).onclick = e => { const b = e.target.closest('.chip'); if (!b) return; a = +b.dataset.v; box.querySelectorAll('#pb .chip').forEach(x => x.setAttribute('aria-pressed', x === b)); upd(); };
+  const su = $(`#pu-${mode}`, box), sv = $(`#pv-${mode}`, box);
+  su.oninput = () => { u = +su.value; $('#puv', box).textContent = hu(u); upd(); };
+  sv.oninput = () => { v = +sv.value; $('#pvv', box).textContent = hu(v); upd(); };
+  $(`#pi-${mode}`, box).onchange = e => { inv = e.target.checked; draw(); };
+  new ResizeObserver(() => draw()).observe(cb);
+  upd();
+  window.__redraw = draw;
+}
+const themeRedraw = () => { if (window.__redraw && document.body.contains(document.querySelector('canvas'))) window.__redraw(); };
+try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', themeRedraw); } catch (e) {}
+new MutationObserver(themeRedraw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+/* ===== Próba-témazáró ===== */
+function renderProba() {
+  const m = $('#main');
+  const items = PROBA_SET.map(id => ({ id, p: G[id].make() }));
+  m.innerHTML = `<div class="eyebrow">Próba</div><h2 class="ch">Próba-témazáró</h2>
+   <p class="lead">12 véletlenszerű feladat a teljes témakörből, feladatonként 1 pont. Tippet itt nem kapsz; a végén a „Beadás” gombbal értékelheted, és minden feladat megoldását megnézheted.</p>
+   <div id="tl"></div>
+   <div class="ansrow" style="margin-top:18px"><button class="btn primary" id="sub">Beadás</button><button class="btn" id="again">Új feladatsor</button></div>
+   <div id="res" style="margin-top:18px"></div>`;
+  $('#tl').innerHTML = items.map((it, i) => `<div class="titem" id="ti${i}"><div class="num">${i + 1}.</div><div class="body"><div class="prob">${it.p.q}</div>
+     <div class="ansrow"><input id="pa${i}" type="text" autocomplete="off" spellcheck="false" aria-label="${i + 1}. feladat válasza" placeholder="Válasz"><span class="fmt">${esc(it.p.fmt)}</span></div>
+     <div class="fb" hidden></div><div class="solbox" hidden></div></div></div>`).join('');
+  $('#again').onclick = () => renderProba();
+  $('#sub').onclick = () => {
+    let pts = 0; const byCh = {};
+    items.forEach((it, i) => { const row = $('#ti' + i); const val = $('#pa' + i).value; const res = checkAnswer(it.p.ans, parseAnswer(val)); const ch = G[it.id].ch;
+      byCh[ch] = byCh[ch] || [0, 0]; byCh[ch][1]++; if (res.ok) { pts++; byCh[ch][0]++; }
+      row.className = 'titem ' + (res.ok ? 'ok' : 'no');
+      const f = row.querySelector('.fb'); f.hidden = false; f.className = 'fb ' + (res.ok ? 'ok' : 'no'); f.textContent = res.ok ? 'Helyes, 1 pont.' : (val.trim() ? 'Nem jó, 0 pont.' : 'Nincs válasz, 0 pont.');
+      const s = row.querySelector('.solbox'); s.hidden = false; s.innerHTML = it.p.sol.map(x => /^\s*\\\[/.test(x) ? `<div class="mathbox">${x}</div>` : `<p>${x}</p>`).join(''); });
+    const pct = Math.round(100 * pts / items.length);
+    const grade = pct >= 85 ? 5 : pct >= 70 ? 4 : pct >= 55 ? 3 : pct >= 40 ? 2 : 1;
+    const weak = Object.entries(byCh).filter(([, v]) => v[0] < v[1]).map(([k]) => CH.find(c => c.id === k));
+    $('#res').innerHTML = `<div class="result"><div><div class="big">${pts} / ${items.length}</div><div class="fmt">${pct}% · tájékoztató jegy: ${grade}</div></div>
+      <div class="prose">${weak.length ? 'Ismételd át: ' + weak.map(c => `<a href="#${c.id}">${c.short}</a>`).join(', ') + '.' : 'Minden feladat sikerült. Kérj új feladatsort, és próbáld meg még egyszer!'}</div></div>`;
+    $('#sub').disabled = true; typeset(m);
+    $('#res').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
+  };
+  typeset(m);
+}
+
+/* ===== Útválasztás ===== */
+function route() {
+  const id = (location.hash || '').slice(1) || 'start';
+  const c = CH.find(x => x.id === id);
+  window.__redraw = null;
+  if (c) renderChapter(c); else if (id === 'proba') renderProba(); else renderHome();
+  renderToc(c ? c.id : (id === 'proba' ? 'proba' : 'start'));
+}
+window.addEventListener('hashchange', () => { route(); const m = $('#main'); const top = m.getBoundingClientRect().top + window.scrollY - 12; if (window.scrollY > top) window.scrollTo({ top, behavior: 'auto' }); });
+route();
+</script>
+
+</body></html>
